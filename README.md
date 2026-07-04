@@ -7,6 +7,7 @@ Windows標準の検索よりも柔軟で、インデックス機能により2回
 ## ダウンロード
 
 最新版は [Releases](../../releases) から入手できます。
+
 ダウンロードするファイルは「FileSearchExplorer_v0.1beta.zip」です。
 「Source code」と書かれた2つのリンクはGitHubが自動生成するもので、
 アプリの実行には使用しません。
