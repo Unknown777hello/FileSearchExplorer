@@ -1,6 +1,7 @@
 <img width="1152" height="648" alt="download" src="https://github.com/user-attachments/assets/053a12df-cb1c-4a7b-b860-28b45233921b" />
 # File Search Explorer
 
+
 ##不具合報告
 
 ダークモードを使用すると検索結果が白くなるというバグが発見されました。
