@@ -1,7 +1,7 @@
 <img width="1152" height="648" alt="download" src="https://github.com/user-attachments/assets/053a12df-cb1c-4a7b-b860-28b45233921b" />
 # File Search Explorer
 
-*不具合発生中*
+# 不具合発生中
 現在v0.2とv0.2betaが不具合が発生しています。
 v0.2はv0.2betaは削除済みです。
 今後のアップデートでバグを削除していきます。
