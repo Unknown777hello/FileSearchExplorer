@@ -1,6 +1,13 @@
 <img width="1152" height="648" alt="download" src="https://github.com/user-attachments/assets/053a12df-cb1c-4a7b-b860-28b45233921b" />
 # File Search Explorer
 
+###不具合報告
+
+ダークモードを使用すると検索結果が白くなるというバグが発見されました。
+不具合が発生しているバージョンは
+v0.2とv0.2betaです。
+ご迷惑をおかけして申し訳ありません。
+
 タブで探す、圧倒的な速さで見つかる。
 ローカル完結のファイル検索デスクトップアプリです。
 
