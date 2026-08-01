@@ -62,3 +62,10 @@ C:\Users\(ユーザー名)\.file_search_explorer\
 | キーワード欄にフォーカス | Ctrl + F |
 | 検索を実行 | F5 / キーワード欄で Enter |
 | 検索を停止 | Esc |
+
+## ライセンス・作者
+
+- 作者: Unknown777
+- ライセンス: MIT License(詳細は同梱の `LICENSE` ファイルをご覧ください)
+- 自由に改変・再配布いただけます
+- 不具合報告・ご要望は GitHub Issues までお願いします: https://github.com/Unknown777hello/FileSearchExplorer/issues
