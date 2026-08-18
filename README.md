@@ -1,70 +1,76 @@
-# File Search Explorer
+# File Search Explorer v0.7.9
 
-Windows向けのファイル検索・管理デスクトップアプリケーションです。Python (Tkinter) 製で、単体のWindowsインストーラーとして配布されており、別途Pythonをインストールする必要はありません。
-
-現在のバージョン: **v0.7.8**
+Windows向けのデスクトップ ファイル検索・管理アプリです。Python / Tkinter 製で、
+ビルド済みインストーラーを使えば別途 Python 環境を用意する必要はありません。
 
 ## 動作環境
 
-- Windows 10 / Windows 11(64bit推奨)
-- Python 本体のインストールは不要(単体のインストーラーとして配布)
+- Windows 10 / Windows 11(64bit)
+- インストーラー版は Python 環境不要(単体で動作します)
+- 完全オフライン動作(外部通信・テレメトリ・広告SDKは一切含みません)
 
 ## 主な機能一覧
 
-- 高速なファイル検索(通常検索 / 事前インデックスを使った高速検索)
-- 検索の並列化(`ParallelSearchWorker`)による大量ファイルの高速走査
-- 部分一致・完全一致・正規表現・あいまい検索(誤字補正)などの一致方式
-- ファイル内容検索(テキスト系ファイルの中身も検索対象に)
-- サイズ・更新日時・作成日時での絞り込み
-- 拡張子指定・除外拡張子・除外フォルダ指定
-- 複数フォルダの同時検索
-- 検索結果のCSVエクスポート(大量件数は自動でバックグラウンド処理)
-- 検索結果のプレビュー表示(テキスト・画像)、ファイルハッシュ計算(MD5/SHA-1/SHA-256)
-- 重複ファイル検索(ハッシュ比較)
-- インデックス管理(作成・更新・VACUUM・整合性チェック・暗号化保存)
-- 検索速度履歴の記録と、次回検索時の所要時間・件数の予測表示
-- 検索条件のプリセット保存・お気に入りフォルダ・最近使ったフォルダ
-- ライト/ダークテーマ切り替え
-- 検索完了時の通知(通知音・デスクトップ通知・アプリ内ポップアップ)
+- ファイル名・フォルダ名検索(部分一致・完全一致・正規表現・あいまい検索(誤字補正))
+- ファイル内容検索(テキスト系ファイル、UTF-8 / CP932 / UTF-16 / BOM付き対応)
+- SQLite + FTS5(trigram)によるインデックス検索(高速・大量ファイル向け)
+- 検索結果の仮想スクロール表示(数十万件規模でも軽快に閲覧可能)
+- 拡張子フィルタ・除外拡張子・除外フォルダ・サイズ/更新日時/作成日時範囲指定
+- 複数フォルダ同時検索、お気に入り・最近使ったフォルダ・検索条件プリセット保存
+- 重複ファイル検索(ハッシュ比較による同一内容ファイルの検出)
+- 検索結果CSVエクスポート(大量件数はバックグラウンド処理)
+- テキスト/画像プレビュー、ファイルハッシュ計算(MD5/SHA-1/SHA-256)
+- 検索完了通知(音・デスクトップ通知・アプリ内ポップアップ)
+- ライト/ダークテーマ、検索速度履歴に基づく所要時間・件数の予測表示
+- インデックスDBの暗号化保存(終了時に暗号化、起動時に復号)
+
+## v0.7.9での変更点(ファイル操作セキュリティ強化)
+
+- 重複ファイル削除処理に、削除直前の安全確認(システム保護フォルダ判定・
+  シンボリックリンク判定・走査時サイズとの比較)を追加
+- 設定ファイル・セッション状態ファイルの書き込みをアトミック化し、
+  クラッシュ・電源断による設定破損を防止
+- パス正規化処理に、Windowsの長いパス表記(`\\?\`)を吸収する処理を追加
+- ファイルを開く操作の事前に、対象の存在確認(移動・削除・壊れたリンクの検出)を追加
+- システム保護フォルダ判定をシンボリックリンク/ジャンクション解決込みに変更
 
 ## 起動方法
 
-インストーラーでインストールした場合は、スタートメニューまたはデスクトップのショートカットから起動してください。
+インストーラーでインストール後、スタートメニューまたはデスクトップの
+「File Search Explorer」から起動してください。
 
 ## データの保存場所
 
-アプリのデータは、ユーザーのホームディレクトリ配下の `.file_search_explorer` フォルダに保存されます。
+すべてのアプリデータは、以下のユーザーフォルダ配下に保存されます(システム
+フォルダやレジストリへは書き込みません)。
 
-- `index.db` / `index.db.enc`: 検索インデックス(終了時に暗号化して保存)
-- `index.key`: インデックス暗号化用の鍵ファイル
-- `settings.json`: アプリの各種設定
-- `session_state.json`: 前回終了時の状態(異常終了検知用)
-- `app_errors.log`: エラーログ(トラブル時の調査用)
+```
+%USERPROFILE%\.file_search_explorer\
+  ├─ settings.json       検索条件・表示設定など
+  ├─ session_state.json  前回終了時の状態(正常終了判定用)
+  ├─ index.db(.enc)      検索インデックスDB(終了時に暗号化)
+  ├─ index.key           インデックスDB暗号化用の鍵
+  └─ app_errors.log      エラーログ(ユーザー名は自動的にマスクされます)
+```
 
 ## 注意事項
 
-- 本アプリはオフラインで動作し、外部への通信は一切行いません。
-- ログファイル(`app_errors.log`)には、調査に必要な範囲でファイルパスや例外内容を記録しますが、検索キーワードやファイルの中身、パスワード等の秘密情報は記録しません。また、ユーザー名を含むホームディレクトリ部分は自動的にマスキングされます。
-- Windows・Program Files・ProgramData などのシステム保護フォルダは、誤削除防止のため重複ファイル検索の対象から自動的に除外されます。
-- 実行ファイル・スクリプト(.exe, .bat, .ps1 等)を開く際は、誤操作防止のため必ず確認ダイアログが表示されます。
+- 重複ファイル検索の「完全に削除する」操作は、ゴミ箱を経由せず元に戻せません。
+  必ず一覧を確認してから実行してください。
+- Windows・Program Files・ProgramData などのシステム関連フォルダは、誤削除
+  防止のため重複ファイル検索・削除の対象から除外されます。
+- 実行ファイル・スクリプト(.exe, .bat, .ps1 等)を開く際は確認ダイアログが表示されます。
 
 ## 主なキー操作
 
-| キー | 動作 |
-|---|---|
-| Ctrl + T | 新しいタブを開く |
-| Ctrl + W | 現在のタブを閉じる |
-| Ctrl + L | 検索フォルダ欄にフォーカス |
-| Ctrl + F | キーワード欄にフォーカス |
-| F5 | 検索を実行 |
-| Esc | 検索を停止 |
-
-## v0.7.8での変更点(セキュリティ基礎強化)
-
-- 外部通信・`shell=True`の使用有無を全ソースに対して監査し、いずれも該当箇所がないことを確認しました。
-- ログ出力からユーザー名(ホームディレクトリ由来)を自動マスキングするようにしました。
-- ファイルを開く際の外部コマンド呼び出しに、入力値検証による多重防御を追加しました。
-- 上記に伴い、既存の検索・インデックス・UIの動作や操作感に変更はありません。
+| 操作 | キー |
+| --- | --- |
+| 新しいタブ | Ctrl + T |
+| 現在のタブを閉じる | Ctrl + W |
+| 検索フォルダ欄にフォーカス | Ctrl + L |
+| キーワード欄にフォーカス | Ctrl + F |
+| 検索実行 | F5 / キーワード欄でEnter |
+| 検索停止 | Esc |
 
 ## ライセンス
 
@@ -72,26 +78,8 @@ MIT License
 
 Copyright (c) Unknown777
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
-## 作者・連絡先
+## 作者・不具合報告
 
 作者: Unknown777
-リポジトリ: https://github.com/Unknown777hello/FileSearchExplorer
-不具合報告・要望: GitHub Issues (https://github.com/Unknown777hello/FileSearchExplorer/issues)
+不具合報告・要望は GitHub Issues までお願いします。
+https://github.com/Unknown777hello/FileSearchExplorer/issues
