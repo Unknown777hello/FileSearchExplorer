@@ -1,76 +1,36 @@
-# File Search Explorer v0.7.9
+# File Search Explorer
 
-Windows向けのデスクトップ ファイル検索・管理アプリです。Python / Tkinter 製で、
-ビルド済みインストーラーを使えば別途 Python 環境を用意する必要はありません。
+Windows向けのファイル検索・管理デスクトップアプリです。フォルダを指定してファイル名・フォルダ名・ファイル内容をすばやく検索し、プレビュー・重複ファイル検出・インデックス検索などの機能を備えています。
+
+**現在のバージョン: v0.8.0**
+
+## 主な機能
+
+- 通常検索（並列走査）・インデックス検索（SQLite / FTS5 trigram対応）の切り替え
+- 部分一致・完全一致・正規表現・あいまい検索（誤字補正）の4種類の一致方法
+- ファイル内容の全文検索（テキスト系拡張子、UTF-8 / UTF-16 / CP932対応）
+- 拡張子フィルタ・除外フォルダ・サイズ範囲・更新日時／作成日時範囲での絞り込み
+- 検索結果の簡易プレビュー（テキスト／画像）とハッシュ値計算（MD5 / SHA-1 / SHA-256）
+- 重複ファイル検索（ハッシュ比較）
+- インデックスDBの暗号化保存（終了時に暗号化、次回起動時に復号）
+- ライト／ダークテーマ、検索条件のプリセット保存、検索速度履歴
 
 ## 動作環境
 
-- Windows 10 / Windows 11(64bit)
-- インストーラー版は Python 環境不要(単体で動作します)
-- 完全オフライン動作(外部通信・テレメトリ・広告SDKは一切含みません)
+- Windows 10 / 11
+- 追加のPython環境は不要です（インストーラーに同梱されています）
 
-## 主な機能一覧
+## インストール
 
-- ファイル名・フォルダ名検索(部分一致・完全一致・正規表現・あいまい検索(誤字補正))
-- ファイル内容検索(テキスト系ファイル、UTF-8 / CP932 / UTF-16 / BOM付き対応)
-- SQLite + FTS5(trigram)によるインデックス検索(高速・大量ファイル向け)
-- 検索結果の仮想スクロール表示(数十万件規模でも軽快に閲覧可能)
-- 拡張子フィルタ・除外拡張子・除外フォルダ・サイズ/更新日時/作成日時範囲指定
-- 複数フォルダ同時検索、お気に入り・最近使ったフォルダ・検索条件プリセット保存
-- 重複ファイル検索(ハッシュ比較による同一内容ファイルの検出)
-- 検索結果CSVエクスポート(大量件数はバックグラウンド処理)
-- テキスト/画像プレビュー、ファイルハッシュ計算(MD5/SHA-1/SHA-256)
-- 検索完了通知(音・デスクトップ通知・アプリ内ポップアップ)
-- ライト/ダークテーマ、検索速度履歴に基づく所要時間・件数の予測表示
-- インデックスDBの暗号化保存(終了時に暗号化、起動時に復号)
+配布されているインストーラーを実行し、画面の指示に従ってインストールしてください。ソースコードからのビルド・実行はサポート対象外です。
 
-## v0.7.9での変更点(ファイル操作セキュリティ強化)
+## バグ報告・機能要望
 
-- 重複ファイル削除処理に、削除直前の安全確認(システム保護フォルダ判定・
-  シンボリックリンク判定・走査時サイズとの比較)を追加
-- 設定ファイル・セッション状態ファイルの書き込みをアトミック化し、
-  クラッシュ・電源断による設定破損を防止
-- パス正規化処理に、Windowsの長いパス表記(`\\?\`)を吸収する処理を追加
-- ファイルを開く操作の事前に、対象の存在確認(移動・削除・壊れたリンクの検出)を追加
-- システム保護フォルダ判定をシンボリックリンク/ジャンクション解決込みに変更
+GitHub Issues にて受け付けています。
 
-## 起動方法
+https://github.com/Unknown777hello/FileSearchExplorer/issues
 
-インストーラーでインストール後、スタートメニューまたはデスクトップの
-「File Search Explorer」から起動してください。
-
-## データの保存場所
-
-すべてのアプリデータは、以下のユーザーフォルダ配下に保存されます(システム
-フォルダやレジストリへは書き込みません)。
-
-```
-%USERPROFILE%\.file_search_explorer\
-  ├─ settings.json       検索条件・表示設定など
-  ├─ session_state.json  前回終了時の状態(正常終了判定用)
-  ├─ index.db(.enc)      検索インデックスDB(終了時に暗号化)
-  ├─ index.key           インデックスDB暗号化用の鍵
-  └─ app_errors.log      エラーログ(ユーザー名は自動的にマスクされます)
-```
-
-## 注意事項
-
-- 重複ファイル検索の「完全に削除する」操作は、ゴミ箱を経由せず元に戻せません。
-  必ず一覧を確認してから実行してください。
-- Windows・Program Files・ProgramData などのシステム関連フォルダは、誤削除
-  防止のため重複ファイル検索・削除の対象から除外されます。
-- 実行ファイル・スクリプト(.exe, .bat, .ps1 等)を開く際は確認ダイアログが表示されます。
-
-## 主なキー操作
-
-| 操作 | キー |
-| --- | --- |
-| 新しいタブ | Ctrl + T |
-| 現在のタブを閉じる | Ctrl + W |
-| 検索フォルダ欄にフォーカス | Ctrl + L |
-| キーワード欄にフォーカス | Ctrl + F |
-| 検索実行 | F5 / キーワード欄でEnter |
-| 検索停止 | Esc |
+このリポジトリはIssueトラッカーとしてのみ運用しており、ソースコードは公開していません。
 
 ## ライセンス
 
@@ -78,8 +38,24 @@ MIT License
 
 Copyright (c) Unknown777
 
-## 作者・不具合報告
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
-作者: Unknown777
-不具合報告・要望は GitHub Issues までお願いします。
-https://github.com/Unknown777hello/FileSearchExplorer/issues
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+## 作者
+
+Unknown777
