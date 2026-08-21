@@ -1,18 +1,18 @@
-FileSearchExplorer
-高速・軽量なファイル検索エクスプローラー for Windows。
+# FileSearchExplorer
+### 高速・軽量なファイル検索エクスプローラー
 
-Python + SQLite FTS5 でファイル名・内容を高速にインデックス化し、リアルタイムに検索できます。
+### Python + SQLite FTS5 でファイル名・内容を高速にインデックス化し、リアルタイムに検索できます。
 
 Python License Platform
 
-主な機能
-ファイル名・中身の全文検索 (SQLite FTS5)
-ドラッグ&ドロップ対応 (tkinterdnd2)
-画像プレビュー (Pillow)
-暗号化設定の保存 (cryptography)
-通知機能 (plyer)
-ポータブル版 (ZIP) とインストーラー版の両方を提供
-ダウンロード / インストール
+## 主な機能
+ファイル名・中身の全文検索 (SQLite FTS5)  
+ドラッグ&ドロップ対応 (tkinterdnd2)  
+画像プレビュー (Pillow)  
+暗号化設定の保存 (cryptography)  
+通知機能 (plyer)  
+ポータブル版 (ZIP) とインストーラー版の両方を提供  
+ダウンロード / インストール  
 1. 公開ZIP版 (ポータブル)
 FileSearchExplorer_vX.X.X.zip をダウンロード
 解凍
