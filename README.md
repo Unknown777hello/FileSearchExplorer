@@ -9,7 +9,7 @@ Python + SQLite FTS5を使用した、
 
 ## ⬇️ ダウンロード
 
-[最新版をダウンロード](https://github.com/Unknown777hello/FileSearchExplorer/releases/tag/v0.8.8)
+[最新版をダウンロード](https://github.com/Unknown777hello/FileSearchExplorer/releases/tag/v0.8.9)
 
 - Windows 10 / 11対応
 - インストーラー版あり
