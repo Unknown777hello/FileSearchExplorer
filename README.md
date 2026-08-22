@@ -1,10 +1,26 @@
 # FileSearchExplorer
-## バージョンv0.8.8をアップロードしました
-### 高速・軽量なファイル検索エクスプローラー
-### Python + SQLite FTS5 でファイル名・内容を高速にインデックス化し、リアルタイムに検索できます。
+
+### 高速・軽量なWindows向けファイル検索アプリ
+
+Python + SQLite FTS5を使用した、
+ファイル名・ファイル内容を高速に検索できるオフライン検索アプリです。
+
+**最新バージョン：v0.8.8**
+
+## ⬇️ ダウンロード
+
+[最新版をダウンロード](https://github.com/Unknown777hello/FileSearchExplorer/releases/tag/v0.8.8)
+
+- Windows 10 / 11対応
+- インストーラー版あり
+- オフラインで動作
+- ファイル名・内容を全文検索
 ## 今回でのアップデートでの変更内容
-・ スプラッシュスクリーンを追加
-・ ホーム画面を追加
+・ スプラッシュスクリーンを追加　　
+・ ホーム画面を追加　　
+## 検索画面のスクリーンショット
+<img width="1919" height="1031" alt="image" src="https://github.com/user-attachments/assets/5f196c7e-0f21-4294-910d-e6f2c96a817e" />
+
 ## 主な機能
 ・ ファイル名・中身の全文検索(SQLite FTS5)  
 ・ ドラッグ&ドロップ対応(tkinterdnd2)  
