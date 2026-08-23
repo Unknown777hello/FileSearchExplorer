@@ -7,24 +7,22 @@ Python + SQLite FTS5を使用した、
 完全オフライン
 インターネット接続を必要とせず、ファイル検索処理はローカルPC上で実行されます。
 
-**最新バージョン：v0.9.0**
+**最新バージョン：v0.9.1**
 
 ## ⬇️ ダウンロード
 
-[最新版をダウンロード](https://github.com/Unknown777hello/FileSearchExplorer/releases/tag/v0.9.0)
+[最新版をダウンロード](https://github.com/Unknown777hello/FileSearchExplorer/releases/tag/v0.9.1)
 
 - Windows 10 / 11対応
 - インストーラー版あり
 - オフラインで動作
 - ファイル名・内容を全文検索
 ## 今回でのアップデートでの変更内容
-- 検索アルゴリズムの最適化
-- インデックスの高速化
-- 検索結果表示の高速化
-- 検索処理の並列化改善
-- 検索キャッシュの最適化
-- 大量ファイル環境向けの走査最適化
-- メモリ使用量の最適化
+- モードの土台を優位しました
+- Max版はこれまでどおりの全機能にしました
+- normal版は一部の高度な機能を省きました
+- lite版は検索速度を最優先しました
+- 「ファイル」メニューからいつでもモードを切り替えられるようにしました
 ## 検索画面のスクリーンショット
 <img width="1919" height="1031" alt="image" src="https://github.com/user-attachments/assets/5f196c7e-0f21-4294-910d-e6f2c96a817e" />
 
