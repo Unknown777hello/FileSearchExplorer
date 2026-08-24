@@ -1,4 +1,4 @@
-# FileSearchExplorer V0.9.2
+# FileSearchExplorer v0.9.2
 
 ### 高速・軽量なWindows向けファイル検索アプリ
 
