@@ -1,4 +1,4 @@
-# FileSearchExplorer v0.9.3
+# FileSearchExplorer v0.9.4
 
 ### 高速・軽量なWindows向けファイル検索アプリ
 
@@ -7,21 +7,19 @@ Python + SQLite FTS5を使用した、
 完全オフライン
 インターネット接続を必要とせず、ファイル検索処理はローカルPC上で実行されます。
 
-**最新バージョン：v0.9.3**
+**最新バージョン：v0.9.4**
 
 ## ⬇️ ダウンロード
 
-[最新版をダウンロード](https://github.com/Unknown777hello/FileSearchExplorer/releases/tag/v0.9.3)
+[最新版をダウンロード](https://github.com/Unknown777hello/FileSearchExplorer/releases/tag/v0.9.4)
 
 - Windows 10 / 11対応
 - インストーラー版あり
 - オフラインで動作
 - ファイル名・内容を全文検索
 ## 今回でのアップデートでの変更内容
-- 「簡易モード」と「難しいモード」を選べるようにしました
-- 「難しいモード」では検索機能を個別に選べます
-- 機能の一覧は横スクロールで見られます
-- 「実行」ボタンを新設しました
+- 起動時のモード選択画面を、2段階の選びからに変更しました
+- 検索画面の中にあった「検索モード：簡易/難しい」の切り替えボタンは廃止しました
 ## 検索画面のスクリーンショット
 <img width="1919" height="1031" alt="image" src="https://github.com/user-attachments/assets/5f196c7e-0f21-4294-910d-e6f2c96a817e" />
 
