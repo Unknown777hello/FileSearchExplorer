@@ -1,13 +1,11 @@
-# Security Policy
-
 ## Supported Versions
 
-現在、セキュリティアップデートの対象バージョンは以下の通りです。
+セキュリティアップデートは、常に最新のリリースバージョンのみを対象とします。
 
 | Version | Supported |
 | ------- | --------- |
-| 0.9.4   | :white_check_mark: |
-| < 0.9.4 | :x: |
+| latest  | :white_check_mark: |
+| others  | :x: |
 
 ## Reporting a Vulnerability
 
