@@ -1,5 +1,5 @@
 FileSearchExplorer License v1.2
-Copyright (c) 2026 Unknown777
+Copyright (c) 2026 Unknown777hello (aka Unknown777)
 Repository: https://github.com/Unknown777hello/FileSearchExplorer
 
 ================================================================
