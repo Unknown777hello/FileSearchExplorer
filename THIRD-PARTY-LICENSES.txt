@@ -1,0 +1,73 @@
+THIRD PARTY LICENSES
+FileSearchExplorer - Third Party Open Source Licenses
+
+適用バージョン: v0.9.4 / v0.9.4-python 以降
+最終更新: 2026-08-28 (v1.3)
+ライセンス: FileSearchExplorer License v1.3 (LICENSE.md)
+
+本ファイルは FileSearchExplorer が使用している第三者ライブラリのライセンス情報を記載しています。
+自作コードは独自ライセンスですが、以下のライブラリには各ライセンスが優先適用されます(LICENSE.md 第8条)。
+
+1. cryptography - Apache-2.0 OR BSD-3-Clause (Dual License)
+
+- Package: cryptography >=44.0
+- Copyright: The cryptography developers and individual contributors
+- Source: https://github.com/pyca/cryptography
+- 用途: インデックスの暗号化 (Fernet)
+- 本配布物では BSD-3-Clause を選択して利用しています。
+- ライセンス全文は同梱の LICENSES/cryptography-BSD-3-Clause.txt を参照
+
+2. pyinstaller - GPL-2.0-only WITH Bootloader Exception
+
+- Package: pyinstaller 6.x (ビルドツールのみ)
+- Copyright: PyInstaller Development Team
+- Source: https://github.com/pyinstaller/pyinstaller
+- 説明: ビルドツールとしてのみ使用。Bootloader Exceptionにより、生成されたバイナリ(あなたのインストーラー)にはGPLは感染しません。配布義務なし。
+
+3. Pillow (PIL Fork) - HPND
+
+- Package: Pillow >=10.0
+- Copyright: Alex Clark and contributors
+- Source: https://github.com/python-pillow/Pillow
+- 用途: 画像プレビュー等
+- ライセンス全文: LICENSES/Pillow-HPND.txt
+
+4. plyer - MIT License
+
+- Package: plyer >=2.1.0
+- Copyright: Kivy Team and plyer contributors
+- Source: https://github.com/kivy/plyer
+- 用途: デスクトップ通知
+- ライセンス全文: LICENSES/plyer-MIT.txt
+
+5. tkinterdnd2 - MIT License
+
+- Package: tkinterdnd2 >=0.3.0
+- Copyright: pmgagne, Eliav2 and contributors
+- Source: https://github.com/pmgagne/tkinterdnd2
+- 用途: ドラッグ&ドロップ対応
+- ライセンス全文: LICENSES/tkinterdnd2-MIT.txt
+
+6. SQLite / SQLite FTS5 - Public Domain
+
+- Package: SQLite (Python標準ライブラリ sqlite3)
+- Copyright: D. Richard Hipp
+- Source: https://www.sqlite.org/
+- 用途: 全文検索インデックス (FTS5)
+
+7. Python Standard Library - PSF-2.0
+
+- tkinter, pathlib, hashlib, json, os, sys 等
+- License: Python Software Foundation License 2.0
+
+配布物への同梱について
+
+- インストーラー版: {app}\LICENSE.md, {app}\THIRD-PARTY-LICENSES.txt, {app}\LICENSES\ フォルダを同梱
+- Python版: リポジトリ直下に LICENSE.md, THIRD-PARTY-LICENSES.txt, LICENSES/ フォルダを同梱
+
+推奨 requirements.txt
+
+cryptography>=44.0
+tkinterdnd2>=0.3.0
+plyer>=2.1.0
+Pillow>=10.0
