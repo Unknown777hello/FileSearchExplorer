@@ -1,0 +1,8 @@
+# FileSearchExplorer - ローカルデータはGithubに上げない
+.file_search_explorer/
+*.db
+*.enc
+*.key
+*.log
+*.bak
+__pycache__/
