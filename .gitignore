@@ -6,3 +6,8 @@
 *.log
 *.bak
 __pycache__/
+dist/
+build/
+*.exe
+.venv/
+venv/
