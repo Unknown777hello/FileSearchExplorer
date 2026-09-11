@@ -17,12 +17,9 @@
 - インデックスは暗号化保存 (Fernet/AES128)
 - shell=True 不使用、Atomic Write採用
 
-## Reporting a Vulnerability
+脆弱性を発見した場合は、GitHubの「Private vulnerability reporting」から非公開で報告してください。
 
-脆弱性を発見した場合は、公開Issueではなく以下へ：
-
-**連絡先:** https://github.com/Unknown777hello/FileSearchExplorer/issues
-タイトルに `[SECURITY]` を付けて作成してください。
+公開Issueには、脆弱性の詳細を投稿しないでください。
 
 - 48時間以内に確認
 - 修正まで詳細の非公開にご協力ください
