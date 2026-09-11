@@ -15,7 +15,7 @@ FileSearchExplorer - Third Party Open Source Licenses
 - Source: https://github.com/pyca/cryptography
 - 用途: インデックスの暗号化 (Fernet)
 - 本配布物では BSD-3-Clause を選択して利用しています。
-- ライセンス全文は同梱の LICENSES/cryptography-BSD-3-Clause.txt を参照
+- ライセンス全文は同梱の LICENSES/cryptography-LICENSE.BSD.txt を参照
 
 2. pyinstaller - GPL-2.0-only WITH Bootloader Exception
 
@@ -30,7 +30,7 @@ FileSearchExplorer - Third Party Open Source Licenses
 - Copyright: Alex Clark and contributors
 - Source: https://github.com/python-pillow/Pillow
 - 用途: 画像プレビュー等
-- ライセンス全文: LICENSES/Pillow-HPND.txt
+- ライセンス全文: LICENSES/Pillow-LICENSE.txt
 
 4. plyer - MIT License
 
@@ -38,7 +38,7 @@ FileSearchExplorer - Third Party Open Source Licenses
 - Copyright: Kivy Team and plyer contributors
 - Source: https://github.com/kivy/plyer
 - 用途: デスクトップ通知
-- ライセンス全文: LICENSES/plyer-MIT.txt
+- ライセンス全文: LICENSES/plyer-LICENSE.txt
 
 5. tkinterdnd2 - MIT License
 
@@ -46,7 +46,7 @@ FileSearchExplorer - Third Party Open Source Licenses
 - Copyright: pmgagne, Eliav2 and contributors
 - Source: https://github.com/pmgagne/tkinterdnd2
 - 用途: ドラッグ&ドロップ対応
-- ライセンス全文: LICENSES/tkinterdnd2-MIT.txt
+- ライセンス全文: LICENSES/tkinterdnd2-LICENSE.txt
 
 6. SQLite / SQLite FTS5 - Public Domain
 
