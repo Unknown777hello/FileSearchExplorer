@@ -208,7 +208,7 @@ README.txt
 
 * Windows 10 / 11
 * 64bit
-* Python 3.12.5
+* * Python 3.12.5（動作確認済み）
 * 必要なPythonライブラリ
 
 ---
