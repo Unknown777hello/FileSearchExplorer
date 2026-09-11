@@ -25,7 +25,7 @@ FileSearchExplorer（以下「本アプリ」）は完全オフラインで動�
 - `index.db.enc / index.key`: 暗号化されたファイル索引（SQLite FTS5）
 - `.file_search_explorer_location.json`: データ保存先のポインタ（ホームディレクトリ直下に固定、レジストリは不使用）
 
-これらのファイルはOSの権限設定（0o600: 所有者のみ読み書き可相当）と、Fernet(AES128)による暗号化、Atomic Write(fsync)により保護されます。アンインストール時に削除可能です。
+これらのファイルはOSのファイル権限設定による保護（WindowsではOSのアクセス制御に依存）と、Fernet(AES128)による暗号化、Atomic Write(fsync)により保護されます。アンインストール時に削除可能です。
 
 ## 5. ログについて
 エラー発生時に `app_errors.log` および `startup_profile.log` にエラー内容や起動時間が保存されることがありますが、外部に自動送信されることは一切ありません。GitHub Issueで不具合報告する際に、ユーザーご自身の判断で一部を貼り付ける場合を除き、開発者が内容を知ることはありません。
