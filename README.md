@@ -116,7 +116,7 @@ app_icon.ico
 Python版を使用する場合は、必要なライブラリをインストールしてください。
 
 ```bash
-pip install cryptography tkinterdnd2 plyer Pillow
+pip install "cryptography>=44.0" "tkinterdnd2>=0.3.0" "plyer>=2.1.0" "Pillow>=10.0"
 ```
 
 その後、Pythonから起動します。
