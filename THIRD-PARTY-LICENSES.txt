@@ -65,7 +65,7 @@ FileSearchExplorer - Third Party Open Source Licenses
 - インストーラー版: {app}\LICENSE.md, {app}\THIRD-PARTY-LICENSES.txt, {app}\LICENSES\ フォルダを同梱
 - Python版: リポジトリ直下に LICENSE.md, THIRD-PARTY-LICENSES.txt, LICENSES/ フォルダを同梱
 
-推奨 requirements.txt
+Python版の依存関係
 
 cryptography>=44.0
 tkinterdnd2>=0.3.0
