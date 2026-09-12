@@ -1,13 +1,33 @@
-# FileSearchExplorer - ローカルデータはGithubに上げない
+# FileSearchExplorer - ローカルデータ・生成物・秘密情報をGitHubに上げない
+
+# Application local data
 .file_search_explorer/
+
+# Database / encrypted data / backups
 *.db
+*.db-*
 *.enc
 *.key
 *.log
 *.bak
+
+# Python cache
 __pycache__/
+*.py[cod]
+
+# Build outputs
 dist/
 build/
 *.exe
+
+# Virtual environments
 .venv/
 venv/
+env/
+
+# Environment / secret files
+.env
+.env.*
+*.pem
+*.p12
+*.pfx
