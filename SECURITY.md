@@ -6,8 +6,8 @@
 
 | Version | Supported |
 | ------- | --------- |
-| latest  | :white_check_mark: |
-| others  | :x: |
+| 0.9.4  | :white_check_mark: |
+| 0.9.3以前  | :x: |
 
 最新版へのアップデートを推奨します。
 
