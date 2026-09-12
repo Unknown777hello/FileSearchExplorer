@@ -121,9 +121,12 @@ pip install cryptography tkinterdnd2 plyer Pillow
 
 その後、Pythonから起動します。
 
-```bash
-python file_search_explorer.py
-```
+Python版はGitHub Releasesからダウンロードしてください。
+
+最新版：
+0.9.4-Python
+
+ダウンロード後、ZIPを展開して使用してください。
 
 Python版はソースコードの閲覧・学習・検証・レビューおよびローカル実行に利用できます。
 改造・再配布などの条件については、LICENSE.mdを確認してください。
