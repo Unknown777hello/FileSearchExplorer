@@ -56,9 +56,9 @@ FileSearchExplorer - Third Party Open Source Licenses
 - 用途: 全文検索インデックス (FTS5)
 
 7. Python Standard Library - PSF-2.0
+   Python Standard Library components used by FileSearchExplorer are licensed under the Python Software Foundation License 2.0.
+   License text: LICENSES/Python-PSF-LICENSE.txt
 
-- tkinter, pathlib, hashlib, json, os, sys 等
-- License: Python Software Foundation License 2.0
 
 配布物への同梱について
 
