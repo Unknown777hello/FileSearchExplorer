@@ -22,7 +22,7 @@ FileSearchExplorer - Third Party Open Source Licenses
 - Package: pyinstaller 6.x (ビルドツールのみ)
 - Copyright: PyInstaller Development Team
 - Source: https://github.com/pyinstaller/pyinstaller
-- 説明: ビルドツールとしてのみ使用。Bootloader Exceptionにより、生成されたバイナリ(あなたのインストーラー)にはGPLは感染しません。配布義務なし。
+- 説明: ビルドツールとしてのみ使用。PyInstallerのBootloader Exceptionが適用されます。ライセンスの詳細については、同梱のライセンス本文を確認してください。
 
 3. Pillow (PIL Fork) - HPND
 
