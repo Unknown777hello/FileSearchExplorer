@@ -14,7 +14,7 @@
 ## 本アプリのセキュリティ設計
 
 - 完全オフライン動作、外部送信なし
-- - インデックスはFernetを使用して暗号化保存
+- インデックスはFernetを使用して暗号化保存
 - shell=True 不使用、Atomic Write採用
 
 脆弱性を発見した場合は、GitHubの「Private vulnerability reporting」から非公開で報告してください。
