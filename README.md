@@ -18,15 +18,30 @@ FileSearchExplorerは、Python + SQLite FTS5を使用した、ファイル名・
 
 ## ダウンロード
 
+### インストーラー版
+
 [最新版 v0.9.4 をダウンロード](https://github.com/Unknown777hello/FileSearchExplorer/releases/tag/v0.9.4)
 
-### 対応環境
+Windows向けの通常利用版です。
 
 * Windows 10 / 11
 * 64bit
+* Python不要
 * インターネット接続不要
-* インストーラー版あり
-* Pythonソース版あり
+
+### Python版
+
+Pythonソースコードを使用する場合はこちらです。
+
+[Python版 v0.9.4-Python をダウンロード](https://github.com/Unknown777hello/FileSearchExplorer/releases/tag/0.9.4-Python)
+
+* Windows 10 / 11
+* 64bit
+* Python 3.12.5（動作確認済み）
+* 必要なPythonライブラリのインストールが必要
+* ソースコードの閲覧・学習・検証・レビュー・ローカル実行が可能
+
+改造・再配布などの条件については、`LICENSE.md` を確認してください。
 
 ---
 
