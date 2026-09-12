@@ -125,7 +125,8 @@ pip install cryptography tkinterdnd2 plyer Pillow
 python file_search_explorer.py
 ```
 
-Python版はソースコードの確認・学習・レビューなどにも利用できます。
+Python版はソースコードの閲覧・学習・検証・レビューおよびローカル実行に利用できます。
+改造・再配布などの条件については、LICENSE.mdを確認してください。
 
 ---
 
