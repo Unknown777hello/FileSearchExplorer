@@ -44,7 +44,7 @@ FileSearchExplorer - Third Party Open Source Licenses
 
 * Package: tkinterdnd2 >=0.3.0
 * Copyright: pmgagne, Eliav2 and contributors
-* Source: https://github.com/kylehase/tkinterdnd2
+* Source: https://github.com/pmgagne/tkinterdnd2
 * 用途: ドラッグ&ドロップ対応
 * ライセンス全文: LICENSES/tkinterdnd2-LICENSE.txt
 
