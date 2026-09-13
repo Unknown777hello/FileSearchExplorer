@@ -6,64 +6,64 @@ FileSearchExplorer - Third Party Open Source Licenses
 ライセンス: FileSearchExplorer License v1.3 (LICENSE.md)
 
 本ファイルは FileSearchExplorer が使用している第三者ライブラリのライセンス情報を記載しています。
-自作コードは独自ライセンスですが、以下のライブラリには各ライセンスが優先適用されます(LICENSE.md 第8条)。
+自作コードは独自ライセンスですが、以下のライブラリには各ライセンスが優先適用されます (LICENSE.md 第8条)。
 
 1. cryptography - Apache-2.0 OR BSD-3-Clause (Dual License)
 
-- Package: cryptography >=44.0
-- Copyright: The cryptography developers and individual contributors
-- Source: https://github.com/pyca/cryptography
-- 用途: インデックスの暗号化 (Fernet)
-- 本配布物では BSD-3-Clause を選択して利用しています。
-- ライセンス全文は同梱の LICENSES/cryptography-LICENSE.BSD.txt を参照
+* Package: cryptography >=44.0
+* Copyright: The cryptography developers and individual contributors
+* Source: https://github.com/pyca/cryptography
+* 用途: インデックスの暗号化 (Fernet)
+* 本配布物では BSD-3-Clause を選択して利用しています。
+* ライセンス全文は同梱の LICENSES/cryptography-LICENSE.BSD.txt を参照
 
 2. pyinstaller - GPL-2.0-only WITH Bootloader Exception
 
-- Package: pyinstaller 6.x (ビルドツールのみ)
-- Copyright: PyInstaller Development Team
-- Source: https://github.com/pyinstaller/pyinstaller
-- 説明: ビルドツールとしてのみ使用。PyInstallerのBootloader Exceptionが適用されます。ライセンスの詳細については、同梱のライセンス本文を確認してください。
+* Package: pyinstaller 6.x
+* Copyright: PyInstaller Development Team
+* Source: https://github.com/pyinstaller/pyinstaller
+* 説明: ビルドに使用しており、生成物には PyInstaller Bootloader Exception が適用されます。ライセンスの詳細については、同梱のライセンス本文を確認してください。
 
 3. Pillow (PIL Fork) - HPND
 
-- Package: Pillow >=10.0
-- Copyright: Alex Clark and contributors
-- Source: https://github.com/python-pillow/Pillow
-- 用途: 画像プレビュー等
-- ライセンス全文: LICENSES/Pillow-LICENSE.txt
+* Package: Pillow >=10.0
+* Copyright: Alex Clark and contributors
+* Source: https://github.com/python-pillow/Pillow
+* 用途: 画像プレビュー等
+* ライセンス全文: LICENSES/Pillow-LICENSE.txt
 
 4. plyer - MIT License
 
-- Package: plyer >=2.1.0
-- Copyright: Kivy Team and plyer contributors
-- Source: https://github.com/kivy/plyer
-- 用途: デスクトップ通知
-- ライセンス全文: LICENSES/plyer-LICENSE.txt
+* Package: plyer >=2.1.0
+* Copyright: Kivy Team and plyer contributors
+* Source: https://github.com/kivy/plyer
+* 用途: デスクトップ通知
+* ライセンス全文: LICENSES/plyer-LICENSE.txt
 
 5. tkinterdnd2 - MIT License
 
-- Package: tkinterdnd2 >=0.3.0
-- Copyright: pmgagne, Eliav2 and contributors
-- Source: https://github.com/pmgagne/tkinterdnd2
-- 用途: ドラッグ&ドロップ対応
-- ライセンス全文: LICENSES/tkinterdnd2-LICENSE.txt
+* Package: tkinterdnd2 >=0.3.0
+* Copyright: pmgagne, Eliav2 and contributors
+* Source: https://github.com/kylehase/tkinterdnd2
+* 用途: ドラッグ&ドロップ対応
+* ライセンス全文: LICENSES/tkinterdnd2-LICENSE.txt
 
 6. SQLite / SQLite FTS5 - Public Domain
 
-- Package: SQLite (Python標準ライブラリ sqlite3)
-- Copyright: D. Richard Hipp
-- Source: https://www.sqlite.org/
-- 用途: 全文検索インデックス (FTS5)
+* Package: SQLite (Python標準ライブラリ sqlite3)
+* Copyright: D. Richard Hipp
+* Source: https://www.sqlite.org/
+* 用途: 全文検索インデックス (FTS5)
 
 7. Python Standard Library - PSF-2.0
-   Python Standard Library components used by FileSearchExplorer are licensed under the Python Software Foundation License 2.0.
-   License text: LICENSES/Python-PSF-LICENSE.txt
 
+Python Standard Library components used by FileSearchExplorer are licensed under the Python Software Foundation License 2.0.
+License text: LICENSES/Python-PSF-LICENSE.txt
 
 配布物への同梱について
 
-- インストーラー版: {app}\LICENSE.md, {app}\THIRD-PARTY-LICENSES.txt, {app}\LICENSES\ フォルダを同梱
-- Python版: リポジトリ直下に LICENSE.md, THIRD-PARTY-LICENSES.txt, LICENSES/ フォルダを同梱
+* インストーラー版: {app}\LICENSE.md, {app}\THIRD-PARTY-LICENSES.txt, {app}\LICENSES\ フォルダを同梱
+* Python版: リポジトリ直下に LICENSE.md, THIRD-PARTY-LICENSES.txt, LICENSES/ フォルダを同梱
 
 Python版の依存関係
 
