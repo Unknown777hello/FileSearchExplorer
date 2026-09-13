@@ -192,7 +192,7 @@ FileSearchExplorerでは、以下の第三者ライブラリを使用してい�
 
 * cryptography - Apache-2.0 OR BSD-3-Clause
 * PyInstaller - GPL-2.0-or-later WITH Bootloader Exception
-* Pillow - HPND
+* Pillow - MIT-CMU License
 * plyer - MIT
 * tkinterdnd2 - MIT
 * SQLite / SQLite FTS5 - Public Domain
