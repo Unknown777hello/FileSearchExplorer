@@ -4,12 +4,11 @@ FileSearchExplorer - Third Party Open Source Licenses
 適用バージョン: v0.9.4 / v0.9.4-python 以降
 最終更新: 2026-09-13
 
-本ファイルは、FileSearchExplorer が使用または配布する第三者ソフトウェアのライセンス情報をまとめたものです。
+本ファイルは、FileSearchExplorerで使用または配布される第三者ソフトウェアについて、ライセンス情報をまとめたものです。
 
 ==================================================
-
 1. cryptography
-   ==================================================
+==================================================
 
 バージョン: >=44.0
 
@@ -18,17 +17,14 @@ Apache License 2.0
 または
 BSD 3-Clause License
 
-cryptography は Apache License 2.0 または BSD 3-Clause License のデュアルライセンスで提供されています。
-
-FileSearchExplorer の配布物に含まれるライセンス情報は、以下に収録しています。
-
+ライセンス本文:
 LICENSES/cryptography-LICENSE.txt
 LICENSES/cryptography-LICENSE.APACHE.txt
 LICENSES/cryptography-LICENSE.BSD.txt
 
 ==================================================
 2. PyInstaller
-==============
+==================================================
 
 バージョン: 6.x
 
@@ -36,95 +32,92 @@ LICENSES/cryptography-LICENSE.BSD.txt
 GNU General Public License version 2.0 or later
 with PyInstaller Bootloader Exception
 
-PyInstaller の主要部分は GPL-2.0-or-later でライセンスされています。
-PyInstaller の Bootloader には Bootloader Exception が適用されます。
-
-FileSearchExplorer の配布物に含まれる PyInstaller のライセンス情報は、以下に収録しています。
-
+PyInstallerのライセンス本文:
 LICENSES/PyInstaller-COPYING.txt
 
-FileSearchExplorer の配布物については、使用・配布される PyInstaller 関連コンポーネントに適用されるライセンス条件を遵守しています。
+PyInstallerを使用して生成されたFileSearchExplorerの配布物については、PyInstallerおよびBootloader Exceptionに適用されるライセンス条件を遵守します。
+
+PyInstallerのライセンス条件は、FileSearchExplorer独自コードに適用される
+「FileSearchExplorer License」とは区別されます。
 
 ==================================================
 3. Pillow
-=========
+==================================================
 
 バージョン: >=10.0
 
 ライセンス:
 MIT-CMU License
 
-FileSearchExplorer の配布物に含まれるライセンス情報は、以下に収録しています。
-
+ライセンス本文:
 LICENSES/Pillow-LICENSE.txt
 
 ==================================================
 4. plyer
-========
+==================================================
 
 バージョン: >=2.1.0
 
 ライセンス:
 MIT License
 
-FileSearchExplorer の配布物に含まれるライセンス情報は、以下に収録しています。
-
+ライセンス本文:
 LICENSES/plyer-LICENSE.txt
 
 ==================================================
 5. tkinterdnd2
-==============
+==================================================
 
 バージョン: >=0.3.0
 
 ライセンス:
 MIT License
 
-FileSearchExplorer の配布物に含まれるライセンス情報は、以下に収録しています。
-
+ライセンス本文:
 LICENSES/tkinterdnd2-LICENSE.txt
 
 ==================================================
 6. SQLite / SQLite FTS5
-=======================
+==================================================
 
-FileSearchExplorer は SQLite および SQLite FTS5 を使用しています。
+FileSearchExplorerはSQLiteおよびSQLite FTS5を使用しています。
 
-SQLite のソースコードは Public Domain として提供されています。
+SQLiteはPublic Domainとして提供されています。
 
 公式情報:
 https://www.sqlite.org/copyright.html
 
-SQLite に関する追加のライセンス本文は、本ソフトウェア独自のライセンスではありません。
-
 ==================================================
 7. Python Standard Library
-==========================
+==================================================
 
-FileSearchExplorer の Python 版では、Python Standard Library を使用しています。
+Python版ではPython Standard Libraryを使用しています。
 
 ライセンス:
 Python Software Foundation License 2.0 (PSF-2.0)
 
-ライセンス本文は以下に収録しています。
-
+ライセンス本文:
 LICENSES/Python-PSF-LICENSE.txt
 
 ==================================================
-配布物へのライセンス同梱
-============
+8. ライセンスファイルの同梱
+==================================================
 
-FileSearchExplorer の配布物には、第三者ソフトウェアに関するライセンス情報として以下を含めています。
+FileSearchExplorerの配布物には、配布形態に応じて必要な第三者ソフトウェアのライセンス情報を同梱します。
+
+主なライセンス関連ファイル:
 
 LICENSE.md
 THIRD-PARTY-LICENSES.txt
 LICENSES/
 
-Python版およびインストーラー版についても、配布形態に応じて必要なライセンス情報を同梱しています。
+第三者ソフトウェアについては、それぞれの著作権者およびライセンス条件が適用されます。
+
+第三者ソフトウェアのライセンス条件とFileSearchExplorer独自ライセンスの条件が異なる場合、該当する第三者ソフトウェアについては、その第三者ライセンスが優先して適用されます。
 
 ==================================================
-Python版の依存ライブラリ
-===============
+9. Python版の依存ライブラリ
+==================================================
 
 cryptography >=44.0
 tkinterdnd2 >=0.3.0
@@ -132,9 +125,3 @@ plyer >=2.1.0
 Pillow >=10.0
 
 ==================================================
-注意事項
-====
-
-第三者ソフトウェアには、それぞれの著作権者およびライセンス条件が適用されます。
-
-第三者ソフトウェアのライセンス条件と FileSearchExplorer 独自ライセンスの条件が異なる場合、第三者ソフトウェアについては当該第三者ライセンスが優先して適用されます。
