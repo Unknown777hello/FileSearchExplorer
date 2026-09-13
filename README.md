@@ -191,7 +191,7 @@ Copyright (c) 2026 Unknown777hello (aka Unknown777)
 FileSearchExplorerでは、以下の第三者ライブラリを使用しています。
 
 * cryptography - Apache-2.0 OR BSD-3-Clause
-* PyInstaller - GPL-2.0-only WITH Bootloader Exception
+* PyInstaller - GPL-2.0-or-later WITH Bootloader Exception
 * Pillow - HPND
 * plyer - MIT
 * tkinterdnd2 - MIT
