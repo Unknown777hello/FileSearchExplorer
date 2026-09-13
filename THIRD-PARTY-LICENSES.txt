@@ -14,7 +14,7 @@ FileSearchExplorer - Third Party Open Source Licenses
 * Copyright: The cryptography developers and individual contributors
 * Source: https://github.com/pyca/cryptography
 * 用途: インデックスの暗号化 (Fernet)
-* 本配布物では BSD-3-Clause を選択して利用しています。
+* 本配布物では BSD-3-Clause の条件を適用しています。
 * ライセンス全文は同梱の LICENSES/cryptography-LICENSE.BSD.txt を参照
 
 2. pyinstaller - GPL-2.0-or-later WITH Bootloader Exception
