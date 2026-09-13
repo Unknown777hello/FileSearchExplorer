@@ -2,83 +2,139 @@ THIRD PARTY LICENSES
 FileSearchExplorer - Third Party Open Source Licenses
 
 適用バージョン: v0.9.4 / v0.9.4-python 以降
-最終更新: 2026-08-28
-ライセンス: FileSearchExplorer License v1.3 (LICENSE.md)
+最終更新: 2026-09-13
 
-本ファイルは FileSearchExplorer が使用している第三者ライブラリのライセンス情報を記載しています。
-自作コードは独自ライセンスですが、以下のライブラリには各ライセンスが優先適用されます (LICENSE.md 第8条)。
+本ファイルは、FileSearchExplorer が使用または配布する第三者ソフトウェアのライセンス情報をまとめたものです。
 
-1. cryptography - Apache-2.0 OR BSD-3-Clause (Dual License)
+==================================================
 
-* Package: cryptography >=44.0
-* Copyright: The cryptography developers and individual contributors
-* Source: https://github.com/pyca/cryptography
-* 用途: インデックスの暗号化 (Fernet)
-* 本配布物では BSD-3-Clause の条件を適用しています。
-* ライセンス全文: LICENSES/cryptography-LICENSE.BSD.txt
-* Apache-2.0 のライセンス全文: LICENSES/cryptography-LICENSE.APACHE.txt
+1. cryptography
+   ==================================================
 
-2. pyinstaller - GPL-2.0-or-later WITH Bootloader Exception
+バージョン: >=44.0
 
-* Package: pyinstaller 6.x
-* Copyright: PyInstaller Development Team
-* Source: https://github.com/pyinstaller/pyinstaller
-* 説明: ビルドに使用しています。
-* PyInstaller 本体: GPL-2.0-or-later
-* Bootloader: GPL-2.0-or-later WITH Bootloader Exception
-* Runtime Hooks: Apache-2.0
-* Additional Runtime Modules: Apache-2.0
-* PyInstaller.isolated サブモジュールおよび対応するテスト: MIT License
-* ライセンス全文: LICENSES/PyInstaller-COPYING.txt
+ライセンス:
+Apache License 2.0
+または
+BSD 3-Clause License
 
-3. Pillow (PIL Fork) - MIT-CMU License
+cryptography は Apache License 2.0 または BSD 3-Clause License のデュアルライセンスで提供されています。
 
-* Package: Pillow >=10.0
-* Copyright: Alex Clark and contributors
-* Source: https://github.com/python-pillow/Pillow
-* 用途: 画像プレビュー等
-* ライセンス全文: LICENSES/Pillow-LICENSE.txt
+FileSearchExplorer の配布物に含まれるライセンス情報は、以下に収録しています。
 
-4. plyer - MIT License
+LICENSES/cryptography-LICENSE.txt
+LICENSES/cryptography-LICENSE.APACHE.txt
+LICENSES/cryptography-LICENSE.BSD.txt
 
-* Package: plyer >=2.1.0
-* Copyright: Kivy Team and plyer contributors
-* Source: https://github.com/kivy/plyer
-* 用途: デスクトップ通知
-* ライセンス全文: LICENSES/plyer-LICENSE.txt
+==================================================
+2. PyInstaller
+==============
 
-5. tkinterdnd2 - MIT License
+バージョン: 6.x
 
-* Package: tkinterdnd2 >=0.3.0
-* Copyright: Philippe Gagné
-* Source: https://github.com/pmgagne/tkinterdnd2
-* 用途: ドラッグ&ドロップ対応
-* ライセンス全文: LICENSES/tkinterdnd2-LICENSE.txt
+ライセンス:
+GNU General Public License version 2.0 or later
+with PyInstaller Bootloader Exception
 
-6. SQLite / SQLite FTS5 - Public Domain
+PyInstaller の主要部分は GPL-2.0-or-later でライセンスされています。
+PyInstaller の Bootloader には Bootloader Exception が適用されます。
 
-* Package: SQLite (Python標準ライブラリ sqlite3)
-* Copyright: D. Richard Hipp
-* Source: https://www.sqlite.org/
-* 用途: 全文検索インデックス (FTS5)
-* SQLite は Public Domain として提供されています。
-* SQLite のライセンス情報は公式サイトを参照してください。
-* 本配布物では SQLite に対して独自の追加ライセンス条件を設定していません。
+FileSearchExplorer の配布物に含まれる PyInstaller のライセンス情報は、以下に収録しています。
 
-7. Python Standard Library - PSF-2.0
+LICENSES/PyInstaller-COPYING.txt
 
-Python Standard Library components used by FileSearchExplorer are licensed under the Python Software Foundation License 2.0.
+FileSearchExplorer の配布物については、使用・配布される PyInstaller 関連コンポーネントに適用されるライセンス条件を遵守しています。
 
-* ライセンス全文: LICENSES/Python-PSF-LICENSE.txt
+==================================================
+3. Pillow
+=========
 
-配布物への同梱について
+バージョン: >=10.0
 
-* インストーラー版: {app}\LICENSE.md, {app}\THIRD-PARTY-LICENSES.txt, {app}\LICENSES\ フォルダを同梱
-* Python版: リポジトリ直下に LICENSE.md, THIRD-PARTY-LICENSES.txt, LICENSES\ フォルダを同梱
+ライセンス:
+MIT-CMU License
 
-Python版の依存関係
+FileSearchExplorer の配布物に含まれるライセンス情報は、以下に収録しています。
 
-cryptography>=44.0
-tkinterdnd2>=0.3.0
-plyer>=2.1.0
-Pillow>=10.0
+LICENSES/Pillow-LICENSE.txt
+
+==================================================
+4. plyer
+========
+
+バージョン: >=2.1.0
+
+ライセンス:
+MIT License
+
+FileSearchExplorer の配布物に含まれるライセンス情報は、以下に収録しています。
+
+LICENSES/plyer-LICENSE.txt
+
+==================================================
+5. tkinterdnd2
+==============
+
+バージョン: >=0.3.0
+
+ライセンス:
+MIT License
+
+FileSearchExplorer の配布物に含まれるライセンス情報は、以下に収録しています。
+
+LICENSES/tkinterdnd2-LICENSE.txt
+
+==================================================
+6. SQLite / SQLite FTS5
+=======================
+
+FileSearchExplorer は SQLite および SQLite FTS5 を使用しています。
+
+SQLite のソースコードは Public Domain として提供されています。
+
+公式情報:
+https://www.sqlite.org/copyright.html
+
+SQLite に関する追加のライセンス本文は、本ソフトウェア独自のライセンスではありません。
+
+==================================================
+7. Python Standard Library
+==========================
+
+FileSearchExplorer の Python 版では、Python Standard Library を使用しています。
+
+ライセンス:
+Python Software Foundation License 2.0 (PSF-2.0)
+
+ライセンス本文は以下に収録しています。
+
+LICENSES/Python-PSF-LICENSE.txt
+
+==================================================
+配布物へのライセンス同梱
+============
+
+FileSearchExplorer の配布物には、第三者ソフトウェアに関するライセンス情報として以下を含めています。
+
+LICENSE.md
+THIRD-PARTY-LICENSES.txt
+LICENSES/
+
+Python版およびインストーラー版についても、配布形態に応じて必要なライセンス情報を同梱しています。
+
+==================================================
+Python版の依存ライブラリ
+===============
+
+cryptography >=44.0
+tkinterdnd2 >=0.3.0
+plyer >=2.1.0
+Pillow >=10.0
+
+==================================================
+注意事項
+====
+
+第三者ソフトウェアには、それぞれの著作権者およびライセンス条件が適用されます。
+
+第三者ソフトウェアのライセンス条件と FileSearchExplorer 独自ライセンスの条件が異なる場合、第三者ソフトウェアについては当該第三者ライセンスが優先して適用されます。
