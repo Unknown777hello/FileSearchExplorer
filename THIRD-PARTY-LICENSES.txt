@@ -24,7 +24,7 @@ FileSearchExplorer - Third Party Open Source Licenses
 * Source: https://github.com/pyinstaller/pyinstaller
 * 説明: ビルドに使用しており、生成物には PyInstaller Bootloader Exception が適用されます。ライセンスの詳細については、同梱のライセンス本文を確認してください。
 
-3. Pillow (PIL Fork) - HPND
+3. Pillow (PIL Fork) - MIT-CMU License
 
 * Package: Pillow >=10.0
 * Copyright: Alex Clark and contributors
