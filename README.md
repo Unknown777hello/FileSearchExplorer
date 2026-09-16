@@ -33,7 +33,7 @@ Windows向けの通常利用版です。
 
 Pythonソースコードを使用する場合はこちらです。
 
-[Python版 v0.9.5-Python をダウンロード](https://github.com/Unknown777hello/FileSearchExplorer/releases/tag/0.9.5-Python)
+[Python版 v0.9.5-Python をダウンロード](https://github.com/Unknown777hello/FileSearchExplorer/releases/tag/v0.9.5-Python)
 
 * Windows 10 / 11
 * 64bit
