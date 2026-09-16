@@ -1,7 +1,7 @@
 THIRD PARTY LICENSES
 FileSearchExplorer - Third Party Open Source Licenses
 
-適用バージョン: v0.9.4 / v0.9.4-python 以降
+適用バージョン: v0.9.5 / v0.9.5-python 以降
 最終更新: 2026-09-13
 
 本ファイルは、FileSearchExplorerで使用または配布される第三者ソフトウェアについて、ライセンス情報をまとめたものです。
@@ -12,7 +12,7 @@ FileSearchExplorer - Third Party Open Source Licenses
 
 バージョン: >=44.0
 
-ライセンス:
+ライセンス:-
 Apache License 2.0
 または
 BSD 3-Clause License
