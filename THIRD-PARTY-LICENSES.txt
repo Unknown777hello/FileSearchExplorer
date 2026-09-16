@@ -2,7 +2,7 @@ THIRD PARTY LICENSES
 FileSearchExplorer - Third Party Open Source Licenses
 
 適用バージョン: v0.9.5 / v0.9.5-python 以降
-最終更新: 2026-09-13
+最終更新: 2026-09-17
 
 本ファイルは、FileSearchExplorerで使用または配布される第三者ソフトウェアについて、ライセンス情報をまとめたものです。
 
@@ -12,7 +12,7 @@ FileSearchExplorer - Third Party Open Source Licenses
 
 バージョン: >=44.0
 
-ライセンス:-
+ライセンス:
 Apache License 2.0
 または
 BSD 3-Clause License
@@ -77,7 +77,19 @@ MIT License
 LICENSES/tkinterdnd2-LICENSE.txt
 
 ==================================================
-6. SQLite / SQLite FTS5
+6. keyboard
+==================================================
+
+バージョン: 使用バージョンに準拠
+
+ライセンス:
+MIT License
+
+ライセンス本文:
+LICENSES/keyboard-LICENSE.txt
+
+==================================================
+7. SQLite / SQLite FTS5
 ==================================================
 
 FileSearchExplorerはSQLiteおよびSQLite FTS5を使用しています。
@@ -88,7 +100,7 @@ SQLiteはPublic Domainとして提供されています。
 https://www.sqlite.org/copyright.html
 
 ==================================================
-7. Python Standard Library
+8. Python Standard Library
 ==================================================
 
 Python版ではPython Standard Libraryを使用しています。
@@ -100,7 +112,7 @@ Python Software Foundation License 2.0 (PSF-2.0)
 LICENSES/Python-PSF-LICENSE.txt
 
 ==================================================
-8. ライセンスファイルの同梱
+9. ライセンスファイルの同梱
 ==================================================
 
 FileSearchExplorerの配布物には、配布形態に応じて必要な第三者ソフトウェアのライセンス情報を同梱します。
@@ -116,12 +128,11 @@ LICENSES/
 第三者ソフトウェアのライセンス条件とFileSearchExplorer独自ライセンスの条件が異なる場合、該当する第三者ソフトウェアについては、その第三者ライセンスが優先して適用されます。
 
 ==================================================
-9. Python版の依存ライブラリ
+10. Python版の依存ライブラリ
 ==================================================
 
 cryptography >=44.0
 tkinterdnd2 >=0.3.0
 plyer >=2.1.0
 Pillow >=10.0
-
-==================================================
+keyboard
