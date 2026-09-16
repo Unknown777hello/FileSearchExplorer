@@ -1,4 +1,4 @@
-# FileSearchExplorer v0.9.4
+# FileSearchExplorer v0.9.5
 
 ### 高速・軽量なWindows向けファイル検索アプリ
 
@@ -11,8 +11,8 @@ FileSearchExplorerは、Python + SQLite FTS5を使用した、ファイル名・
 * 暗号化インデックス対応
 * Windows 10 / 11対応
 
-**最新安定版：v0.9.4**
-**v0.9.5 開発中**
+**最新安定版：v0.9.5**
+**v0.9.6 開発中**
 
 ---
 
@@ -20,7 +20,7 @@ FileSearchExplorerは、Python + SQLite FTS5を使用した、ファイル名・
 
 ### インストーラー版
 
-[最新版 v0.9.4 をダウンロード](https://github.com/Unknown777hello/FileSearchExplorer/releases/tag/v0.9.4)
+[最新版 v0.9.5 をダウンロード](https://github.com/Unknown777hello/FileSearchExplorer/releases/tag/v0.9.5)
 
 Windows向けの通常利用版です。
 
@@ -33,7 +33,7 @@ Windows向けの通常利用版です。
 
 Pythonソースコードを使用する場合はこちらです。
 
-[Python版 v0.9.4-Python をダウンロード](https://github.com/Unknown777hello/FileSearchExplorer/releases/tag/0.9.4-Python)
+[Python版 v0.9.5-Python をダウンロード](https://github.com/Unknown777hello/FileSearchExplorer/releases/tag/0.9.5-Python)
 
 * Windows 10 / 11
 * 64bit
@@ -45,12 +45,13 @@ Pythonソースコードを使用する場合はこちらです。
 
 ---
 
-## v0.9.4の変更点
+## v0.9.5の変更点
 
-* 起動時のモード選択画面を2段階選択に変更
-* 検索モードの選択をホーム画面で行う方式に変更
-* 検索画面から「検索モード：簡易 / 難しい」の切り替えボタンを廃止
-* プレビュー機能の安定性を向上
+- インデックス作成中に万が一起きるかもしれないエラーの安全性を高めました
+- 検索結果のエクスポート時に、保存前の確認を強化しました
+- 重複ファイル削除時の安全チェックを整理しました
+- ログファイルが際限なく大きくなり続けないようにしました
+などいろいろ追加しました
 
 ---
 
@@ -139,7 +140,7 @@ pip install "cryptography>=44.0" "tkinterdnd2>=0.3.0" "plyer>=2.1.0" "Pillow>=10
 Python版はGitHub Releasesからダウンロードしてください。
 
 最新版：
-0.9.4-Python
+0.9.5-Python
 
 ダウンロード後、ZIPを展開して使用してください。
 
