@@ -1,254 +1,98 @@
-# FileSearchExplorer v0.9.6
+# FileSearchExplorer
 
-### 高速・軽量なWindows向けファイル検索アプリ
+Windows 10 / 11で使える無料のファイル検索ソフトです。
 
-FileSearchExplorerは、Python + SQLite FTS5を使用した、ファイル名・ファイル内容を高速に検索できるWindows向けの完全オフライン検索アプリです。
+ファイル名だけでなく、ファイルの中身も検索できます。
 
-* 完全オフラインで動作
-* 外部へのデータ送信なし
-* ファイル名・ファイル内容の全文検索
-* SQLite FTS5による高速検索
-* 暗号化インデックス対応
-* Windows 10 / 11対応
+インターネットに接続しなくても、パソコン内のファイルを検索できます。
 
-**最新安定版：v0.9.6**
-**v0.9.7 開発中**
-
----
+<img width="1919" height="1079" alt="FileSearchExplorer" src="https://github.com/user-attachments/assets/00b2955e-db3e-4158-abb5-cc673bdb7298" />
 
 ## ダウンロード
 
-### インストーラー版
+最新版は、以下からダウンロードできます。
 
-[最新版 v0.9.6 をダウンロード](https://github.com/Unknown777hello/FileSearchExplorer/releases/tag/v0.9.6)
+https://github.com/Unknown777hello/FileSearchExplorer/releases
 
-Windows向けの通常利用版です。
-
-* Windows 10 / 11
-* 64bit
-* Python不要
-* インターネット接続不要
-
-### Python版
-
-Pythonソースコードを使用する場合はこちらです。
-
-[Python版 v0.9.6-Python をダウンロード](https://github.com/Unknown777hello/FileSearchExplorer/releases/tag/v0.9.6-Python)
-
-* Windows 10 / 11
-* 64bit
-* Python 3.12系（3.12.5で動作確認）
-* 必要なPythonライブラリのインストールが必要
-* ソースコードの閲覧・学習・検証・レビュー・ローカル実行が可能
-
-改造・再配布などの条件については、`LICENSE.md` を確認してください。
-
----
-
-## 検索モード
-
-FileSearchExplorerには、大きく分けて2種類の検索モードがあります。
-
-### 簡易モード
-
-通常のファイル検索を簡単に行いたい場合に使用します。
-
-簡易モードには、用途や検索量に応じて3つのモードがあります。
-
-* Lite版
-* Normal版
-* Max版
-
-それぞれ検索処理の負荷や検索範囲などが異なり、PC環境や用途に合わせて選択できます。
-
-### 難しいモード
-
-より高度な検索を行いたい場合に使用します。
-
-複数の検索条件や高度な検索機能を利用できます。
-
----
+インストーラーをダウンロードして実行してください。
 
 ## 主な機能
 
-* ファイル名検索
-* ファイル内容の全文検索
-* SQLite FTS5による高速検索
-* AND / OR / NOT検索
-* 正規表現検索
-* あいまい検索
-* ドラッグ＆ドロップ対応
-* 画像プレビュー
-* 検索結果のプレビュー
-* ファイル・フォルダ操作
-* 暗号化インデックス
-* 暗号化された設定の保存
-* デスクトップ通知
-* 検索モードの切り替え
-* インストーラー版 / Pythonソース版の提供
+- ファイル名の検索
+- ファイルの中身の検索
+- AND検索
+- OR検索
+- NOT検索
+- 正規表現検索
+- あいまい検索
+- 重複ファイル検索
+- ファイルのプレビュー
+- ドラッグ＆ドロップ
+- 検索結果の出力
+- ダークモード
+- 簡単な検索
+- 高度な検索
 
----
+## 簡単な検索と高度な検索
 
-## スクリーンショット
+検索画面では、簡単な検索と高度な検索を切り替えて使えます。
 
-<img width="1919" height="1031" alt="FileSearchExplorer検索画面" src="https://github.com/user-attachments/assets/5f196c7e-0f21-4294-910d-e6f2c96a817e" />
+普段のファイル検索には簡単な検索を使い、細かい条件を指定したい場合は高度な検索を使えます。
 
----
+## ファイルの中身を検索
 
-## インストール方法
+ファイル名が分からない場合でも、ファイルの中に書かれている文字から検索できます。
 
-### インストーラー版
+パソコンの中にある大量のファイルから、目的のファイルを探すときに使用できます。
 
-1. GitHub Releasesからインストーラーをダウンロード
-2. インストーラーを実行
-3. 画面の指示に従ってインストール
-4. スタートメニューなどからFileSearchExplorerを起動
+## 重複ファイル検索
 
-インストール後、アプリフォルダには以下のようなファイルが配置されます。
+パソコン内にある重複したファイルを探すことができます。
 
-```text
-FileSearchExplorer.exe
-README.txt
-LICENSE.md
-THIRD-PARTY-LICENSES.txt
-LICENSES/
-```
+同じファイルが複数の場所に保存されていないか確認したい場合などに使用できます。
 
----
+## 検索方法
 
-### Python版
+検索場所と検索する文字を指定して、検索を開始します。
 
-Python版を使用する場合は、必要なライブラリをインストールしてください。
+検索条件を細かく指定することもできます。
 
-```bash
-pip install cryptography Pillow plyer tkinterdnd2 keyboard pystray
-```
+## 対応している環境
 
-その後、Pythonから起動します。
+- Windows 10
+- Windows 11
 
-Python版はGitHub Releasesからダウンロードしてください。
+4GB以上のメモリを推奨しています。
 
-最新版：
-0.9.6-Python
+## インターネット接続について
 
-ダウンロード後、ZIPを展開して使用してください。
+FileSearchExplorerは、パソコン内のファイルを検索するためのソフトです。
 
-Python版はソースコードの閲覧・学習・検証・レビューおよびローカル実行に利用できます。
-改造・再配布などの条件については、LICENSE.mdを確認してください。
+ファイルを外部のサービスに送信して検索する方式ではありません。
 
----
+## 使用しているライブラリ
 
-## 使用方法
-
-1. 検索対象のフォルダを指定
-2. 検索モードを選択
-3. キーワードを入力
-4. 検索を実行
-5. 検索結果を確認
-6. 必要に応じて結果を開いたり操作したりする
-
-用途に応じて「簡易」または「難しい」検索モードを選択できます。
-
----
+- cryptography
+- PyInstaller
+- Pillow
+- plyer
+- tkinterdnd2
+- pystray
 
 ## ライセンス
 
-### 自作コード
+ライセンスについては、リポジトリ内の `LICENSE` を確認してください。
 
-本プロジェクトの自作コードには、独自ライセンスである「FileSearchExplorer License v1.3」を適用しています。
+使用している外部ライブラリについては、`THIRD-PARTY-LICENSES.txt` を確認してください。
 
-MIT Licenseではありません。
+## 不具合や要望について
 
-Copyright (c) 2026 Unknown777hello (aka Unknown777)
+不具合を見つけた場合や、追加してほしい機能がある場合は、GitHubのIssuesから報告してください。
 
-主な条件：
+https://github.com/Unknown777hello/FileSearchExplorer/issues
 
-* 個人の非商用利用は無償・自由
-* Python版は学習・レビュー目的の閲覧・実行を許可
-* 改造版の再配布には事前許可が必要
-* Forkは学習・PR目的に限り自由
-* 商用利用には許可が必要
-* 紹介動画・ブログなどでの紹介は、収益化されている場合でも許可
-* 現状有姿で提供
-* 法令で認められる範囲で免責
+## 更新履歴
 
-詳細については、必ず `LICENSE.md` を確認してください。
+過去の更新内容は、以下から確認できます。
 
----
-
-## 第三者ライブラリ
-
-FileSearchExplorerでは、以下の第三者ライブラリを使用しています。
-
-* cryptography - Apache-2.0 OR BSD-3-Clause
-* PyInstaller - GPL-2.0-or-later WITH Bootloader Exception
-* Pillow - MIT-CMU License
-* plyer - MIT
-* tkinterdnd2 - MIT
-* SQLite / SQLite FTS5 - Public Domain
-* keyboard - MIT
-
-各ライブラリのライセンスについては、`THIRD-PARTY-LICENSES.txt` および `LICENSES/` を確認してください。
-
----
-
-## 配布物に含まれるライセンス
-
-公開ZIPおよびInno Setupインストーラーには、必要なライセンス関連ファイルを同梱しています。
-
-```text
-LICENSE.md
-THIRD-PARTY-LICENSES.txt
-LICENSES/
-README.txt
-```
-
----
-
-## 要件
-
-### インストーラー版
-
-* Windows 10 / 11
-* 64bit
-* Python不要
-* インターネット接続不要
-
-### Python版
-
-* Windows 10 / 11
-* 64bit
-* Python 3.12.5（動作確認済み）
-* 必要なPythonライブラリ
-
----
-
-## プライバシー
-
-FileSearchExplorerは完全オフラインで動作することを目的として設計されています。
-
-アプリの通常動作において、ファイル検索などのデータを外部サービスへ送信することはありません。
-
-詳しくは `PRIVACY.md` を確認してください。
-
----
-
-## セキュリティ
-
-セキュリティ上の問題を発見した場合は、`SECURITY.md` を確認してください。
-
----
-
-## 注意事項
-
-本ツールは、ご自身が所有・管理するPC、または所有者から明確な許可を得た範囲で使用してください。
-
----
-
-## 作者
-
-Unknown777hello
-aka Unknown777
-
-GitHub:
-https://github.com/Unknown777hello/FileSearchExplorer
+https://github.com/Unknown777hello/FileSearchExplorer/releases
