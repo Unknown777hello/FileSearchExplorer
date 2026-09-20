@@ -1,4 +1,4 @@
-# FileSearchExplorer v0.9.5
+# FileSearchExplorer v0.9.6
 
 ### 高速・軽量なWindows向けファイル検索アプリ
 
@@ -11,8 +11,8 @@ FileSearchExplorerは、Python + SQLite FTS5を使用した、ファイル名・
 * 暗号化インデックス対応
 * Windows 10 / 11対応
 
-**最新安定版：v0.9.5**
-**v0.9.6 開発中**
+**最新安定版：v0.9.6**
+**v0.9.7 開発中**
 
 ---
 
@@ -20,7 +20,7 @@ FileSearchExplorerは、Python + SQLite FTS5を使用した、ファイル名・
 
 ### インストーラー版
 
-[最新版 v0.9.5 をダウンロード](https://github.com/Unknown777hello/FileSearchExplorer/releases/tag/v0.9.5)
+[最新版 v0.9.6 をダウンロード](https://github.com/Unknown777hello/FileSearchExplorer/releases/tag/v0.9.6)
 
 Windows向けの通常利用版です。
 
@@ -33,7 +33,7 @@ Windows向けの通常利用版です。
 
 Pythonソースコードを使用する場合はこちらです。
 
-[Python版 v0.9.5-Python をダウンロード](https://github.com/Unknown777hello/FileSearchExplorer/releases/tag/v0.9.5-Python)
+[Python版 v0.9.6-Python をダウンロード](https://github.com/Unknown777hello/FileSearchExplorer/releases/tag/v0.9.6-Python)
 
 * Windows 10 / 11
 * 64bit
@@ -122,7 +122,6 @@ README.txt
 LICENSE.md
 THIRD-PARTY-LICENSES.txt
 LICENSES/
-app_icon.ico
 ```
 
 ---
@@ -132,7 +131,7 @@ app_icon.ico
 Python版を使用する場合は、必要なライブラリをインストールしてください。
 
 ```bash
-pip install "cryptography>=44.0" "tkinterdnd2>=0.3.0" "plyer>=2.1.0" "Pillow>=10.0"
+pip install cryptography Pillow plyer tkinterdnd2 keyboard pystray
 ```
 
 その後、Pythonから起動します。
@@ -140,7 +139,7 @@ pip install "cryptography>=44.0" "tkinterdnd2>=0.3.0" "plyer>=2.1.0" "Pillow>=10
 Python版はGitHub Releasesからダウンロードしてください。
 
 最新版：
-0.9.5-Python
+0.9.6-Python
 
 ダウンロード後、ZIPを展開して使用してください。
 
