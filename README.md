@@ -196,6 +196,7 @@ FileSearchExplorerでは、以下の第三者ライブラリを使用してい�
 * plyer - MIT
 * tkinterdnd2 - MIT
 * SQLite / SQLite FTS5 - Public Domain
+* keyboard - MIT
 
 各ライブラリのライセンスについては、`THIRD-PARTY-LICENSES.txt` および `LICENSES/` を確認してください。
 
