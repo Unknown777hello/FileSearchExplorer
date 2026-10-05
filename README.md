@@ -10,11 +10,17 @@ Windows 10 / 11で使える、無料のファイル検索ソフトです。
 
 ## ダウンロード
 
-最新版はこちらからダウンロードできます。
+最新版はGitHub Releasesからダウンロードできます。
 
-https://github.com/Unknown777hello/FileSearchExplorer/releases
+[最新版をダウンロード](https://github.com/Unknown777hello/FileSearchExplorer/releases/latest)
 
-インストーラーをダウンロードして実行してください。
+### インストール
+
+1. 最新版のReleasesページを開く
+2. `FileSearchExplorer_Setup_*.exe` をダウンロードする
+3. ダウンロードしたインストーラーを実行する
+
+**Pythonのインストールは必要ありません。**
 
 ## こんなときに使えます
 
