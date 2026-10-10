@@ -49,10 +49,12 @@ Windows 10 / 11で使える、無料のファイル検索ソフトです。
 * 高度な検索
 
 ## スクリーンショット
+
 <img width="1919" height="1079" alt="Github用_1" src="https://github.com/user-attachments/assets/d493b09f-d91c-48ec-8876-592050c988b6" />
 <img width="1919" height="1079" alt="Github用_2" src="https://github.com/user-attachments/assets/1f8ecffe-a6ef-45e7-9503-2dc6aa1b3922" />
 <img width="1919" height="1079" alt="Github用_4" src="https://github.com/user-attachments/assets/8be4007b-c756-4d95-8946-481be6a7a6d0" />
 <img width="756" height="549" alt="Github用_5" src="https://github.com/user-attachments/assets/0e476e55-69c4-4149-b5dd-9a571779e842" />
+
 ## 簡単な検索
 
 普段のファイル検索には、簡単な検索を使用できます。
@@ -100,6 +102,7 @@ FileSearchExplorerは、パソコン内のファイルを検索するソフト�
 * plyer
 * tkinterdnd2
 * pystray
+* keyboard
 
 ## ライセンス
 
