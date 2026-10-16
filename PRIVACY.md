@@ -40,23 +40,30 @@ FileSearchExplorer（以下「本アプリ」）は、ユーザーのPC上でフ
 
 本アプリは、検索機能や設定のためにユーザーのPC上へデータを保存します。
 
-主な保存先は以下です。
+### 設定・連携データ
 
-`~/.file_search_explorer/`
+- 保存先：`%APPDATA%\FileSearchExplorer`
+- 設定ファイル：`%APPDATA%\FileSearchExplorer\settings.json`
+- 連携用フォルダ：`%APPDATA%\FileSearchExplorer\handoff`
 
-保存される可能性があるもの：
+### インデックス・ログ・セッションデータ
 
-* `settings.json`
-* `session_state.json`
-* `index.db.enc`
-* `index.key`
-* `app_errors.log`
-* `startup_profile.log`
-* その他、本アプリの動作に必要なローカルデータ
+- 保存先：`%LOCALAPPDATA%\FileSearchExplorer`
+- インデックスデータ：`index.db` または `index.db.enc`
+- エラーログ：`app_errors.log`
+- 起動プロファイルログ：`startup_profile.log`
+- セッション状態：`session_state.json`
 
-検索インデックス等の一部データは暗号化して保存されます。
+### 暗号化キー
 
-ログが生成される場合がありますが、ログは自動的に開発者へ送信されません。
+- 保存先：`%LOCALAPPDATA%\FileSearchExplorerKeys`
+- キーファイル：`index.key`
+
+暗号化キーは、インデックスデータの保存先とは別のフォルダに保存されます。
+
+これらのデータはユーザーのPC内に保存され、通常動作では開発者や外部サーバーへ自動送信されません。
+
+旧バージョンの保存データは、初回起動時に新しい保存先へ移行される場合があります。必要に応じて、アップデート前にバックアップを作成してください。
 
 ## 5. セキュリティ
 
