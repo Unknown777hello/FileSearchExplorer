@@ -1,4 +1,4 @@
-# タイトル：【FileSearchExplorer解説 #1　Qiita 58回】FSEの全体構造と起動の流れ
+# タイトル：【FileSearchExplorer解説 #1】FSEの全体構造と起動の流れ
 ## はじめに
 
 こんにちは、Unknown777です。
