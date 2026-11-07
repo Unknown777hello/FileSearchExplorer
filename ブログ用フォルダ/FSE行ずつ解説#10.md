@@ -1,0 +1,886 @@
+# 【FileSearchExplorer解説 #10】
+
+## はじめに
+
+こんにちはUnknown777です。
+
+今回は、FileSearchExplorerのコードを1行ずつ解説します。前回の3956行目までの続きです。
+
+前回のブログも読んでくださった皆さん、本当にありがとうございます。今回のブログも頑張って作りました。
+
+また、今回のブログの「本編」はAIで作っています。
+
+できるだけ自然な文章になるようにUnknown777が書き直しているので、読みやすくなっていると思います。
+
+では、本編に入る前にこのブログの書く方法を記しておきます。
+
+#### ブログ記述方法
+
+AIに1行ずつ詳しく説明してもらう(AIのほうが詳しい)(ググりながらコード書いてるレベルなので)
+
+それを文章作成アプリで移すついでに文章を校正、ググって訂正をする
+
+それをブログサイトなどに張り付けて公開するという手順です。
+
+## 本編
+
+### **第1章：コピーと移動**
+
+- `def copy_path_to(src, dest_dir):`：ファイルやフォルダを別フォルダへコピーする関数。
+- `"""修正(v0.9.6・コピー)。戻り値: (成功したか, コピー先パス or エラーメッセージ)"""`：戻り値の形を示すdocstring。
+- `if not os.path.exists(src):`：コピー元がない場合。
+- `return False, "コピー元が見つかりませんでした"`：コピー元なしとして返す。
+- `if not os.path.isdir(dest_dir):`：コピー先がフォルダでない場合。
+- `return False, "コピー先フォルダが見つかりません"`：コピー先なしとして返す。
+- `name = os.path.basename(src.rstrip(os.sep))`：末尾の区切り文字を除いてから名前だけ取り出す。`C:\a\b\` でも `b` が取れるようにするため。
+- `dest_path = os.path.join(dest_dir, name)`：コピー先フォルダと名前を組み合わせる。
+- `if os.path.abspath(dest_path) == os.path.abspath(src):`：コピー先とコピー元が同じパスか確認する。
+- `return False, "コピー元とコピー先が同じです"`：同じ場所へのコピーを防ぐ。
+- `if os.path.exists(dest_path):`：コピー先に同名がある場合。
+- `return False, "コピー先に同じ名前のファイル/フォルダが既に存在します"`：上書きを防ぐ。
+- `try:`：コピー処理の例外に備える。
+- `import shutil as _shutil`：コピー用の `shutil` をここで読み込む。起動時に読まない遅延インポート。
+- `if os.path.isdir(src):`：コピー元がフォルダの場合。
+- `_shutil.copytree(src, dest_path)`：フォルダごとコピーする。
+- `else:`：ファイルの場合。
+- `_shutil.copy2(src, dest_path)`：メタデータも含めてファイルをコピーする。
+- `except OSError as exc:`：コピー失敗を捕捉する。
+- `return False, str(exc)`：失敗内容を返す。
+- `return True, dest_path`：成功としてコピー先を返す。
+- `def move_path_to(src, dest_dir):`：ファイルやフォルダを別フォルダへ移動する関数。
+- `"""修正(v0.9.6・移動)。戻り値: (成功したか, 移動先パス or エラーメッセージ)"""`：戻り値の形を示すdocstring。
+- `if not os.path.exists(src):`：移動元がない場合。
+- `return False, "移動元が見つかりませんでした"`：移動元なしとして返す。
+- `if not os.path.isdir(dest_dir):`：移動先がフォルダでない場合。
+- `return False, "移動先フォルダが見つかりません"`：移動先なしとして返す。
+- `if is_protected_system_dir(os.path.dirname(src)):`：移動元の親フォルダが保護対象か確認する。
+- `return False, "システム関連フォルダ内のため、安全のため操作をスキップしました"`：システム関連は移動しない。
+- `dest_path = os.path.join(dest_dir, os.path.basename(src.rstrip(os.sep)))`：移動先パスを作る。コピーと同じ考え方。
+- `if os.path.abspath(dest_path) == os.path.abspath(src):`：移動先と移動元が同じか確認する。
+- `return False, "移動元と移動先が同じです"`：同じ場所への移動を防ぐ。
+- `if os.path.exists(dest_path):`：移動先に同名がある場合。
+- `return False, "移動先に同じ名前のファイル/フォルダが既に存在します"`：上書きを防ぐ。
+- `try:`：移動処理の例外に備える。
+- `import shutil as _shutil`：移動用の `shutil` を遅延インポートする。
+- `_shutil.move(src, dest_path)`：実際に移動する。別ドライブならコピー＋削除になることもある。
+- `except OSError as exc:`：移動失敗を捕捉する。
+- `return False, str(exc)`：失敗内容を返す。
+- `return True, dest_path`：成功として移動先を返す。
+
+### **第2章：検索結果の保存・復元・比較**
+
+- `# 修正(v0.9.7・検索結果の保存/読込/比較・検索範囲のクイック選択): 以下はTkinterに依存しない純粋な補助関数群。保存ファイルはJSON(UTF-8)で、外部通信は一切行わない。`：ここからはUIに依存しない補助関数群という宣言。保存はJSONで、通信はしない。
+- `RESULT_SNAPSHOT_FORMAT = "file_search_explorer_results"`：保存ファイルの形式名。
+- `RESULT_SNAPSHOT_VERSION = 1`：保存ファイルのバージョン。
+- `SAVED_RESULTS_DIR = os.path.join(APP_DATA_DIR, "saved_results")`：保存ファイル置き場。
+- `COMPARE_MAX_DISPLAY_ROWS = 20000`：比較結果の表示上限。
+- `def build_result_snapshot(entries, meta=None):`：検索結果を保存用の辞書に変換する関数。
+- `"""検索結果(SearchTabの結果エントリのリスト)を、後から開けるJSON用の辞書に変換する。サイズ不明(-1)はNone、画面表示用の文字列(size等)は保存せず、読み込み時にsnapshot_to_entries()で再生成する。"""`：表示用の文字列は保存せず、読み込み時に作り直す方針。
+- `items = []`：保存用のエントリ一覧を作る。
+- `for e in entries:`：結果を1件ずつ見る。
+- `size_bytes = e.get('size_bytes', -1)`：バイト単位のサイズを取り出す。なければ `-1`。
+- `items.append({'path': e['path'], 'name': e['name_raw'], 'dir': e['dir'], 'size': None if (size_bytes is None or size_bytes < 0) else size_bytes, 'mtime': e.get('mtime') or '', 'is_dir': bool(e.get('is_dir')), 'match': e.get('match') or '',})`：保存に必要な項目だけを残す。サイズ不明は `None` にする。
+- `return {'format': RESULT_SNAPSHOT_FORMAT, 'version': RESULT_SNAPSHOT_VERSION, 'app_version': APP_VERSION, 'saved_at': datetime.now().strftime("%Y-%m-%d %H:%M:%S"), 'meta': meta or {}, 'count': len(items), 'entries': items,}`：形式名、バージョン、保存日時などと一緒に返す。
+- `def snapshot_to_entries(data):`：保存データを画面用のエントリに戻す関数。
+- `"""保存ファイルの内容を検証し、SearchTabの結果エントリ形式へ戻す。形式が違う場合はValueError。手動編集等で一部の項目が壊れていても、読み取れない行だけをスキップして継続する。"""`：壊れた行は飛ばして続ける方針。
+- `if not isinstance(data, dict) or data.get('format') != RESULT_SNAPSHOT_FORMAT:`：辞書でない、または形式名が違う場合。
+- `raise ValueError("File Search Explorer の検索結果ファイルではありません")`：別ファイルとしてエラーにする。
+- `items = data.get('entries')`：エントリ一覧を取り出す。
+- `if not isinstance(items, list):`：エントリがリストでない場合。
+- `raise ValueError("検索結果ファイルの形式が正しくありません（entriesがありません）")`：形式エラーとして返す。
+- `entries = []`：復元したエントリ一覧。
+- `for item in items:`：保存された1件ずつを見る。
+- `if not isinstance(item, dict):`：辞書でない行は飛ばす。
+- `continue`：次の行へ進む。
+- `path = item.get('path')`：パスを取り出す。
+- `if not isinstance(path, str) or not path:`：パスが文字列でない、または空の場合。
+- `continue`：パスがなければその行は使えないので飛ばす。
+- `name = item.get('name') if isinstance(item.get('name'), str) else os.path.basename(path)`：名前が文字列ならそれを、なければパスから推測する。
+- `dir_path = item.get('dir') if isinstance(item.get('dir'), str) else os.path.dirname(path)`：フォルダも同じ考え方で補う。
+- `size = item.get('size')`：サイズを取り出す。
+- `if not isinstance(size, int) or isinstance(size, bool) or size < 0:`：整数でない、ブール値、負の数の場合。`bool` は `int` の仲間なので別に弾く。
+- `size = None`：サイズ不明として扱う。
+- `mtime = item.get('mtime') if isinstance(item.get('mtime'), str) else ''`：更新日時は文字列ならそれを、なければ空文字。
+- `match = item.get('match') if isinstance(item.get('match'), str) else ''`：マッチ情報も同じく文字列だけ採用する。
+- `entries.append({'name_raw': name, 'dir': dir_path, 'size': human_size(size), 'size_bytes': size if size is not None else -1, 'mtime': mtime, 'path': path, 'match': match, 'is_dir': bool(item.get('is_dir')),})`：画面用の形に戻す。`size` の表示文字列はここで再生成する。
+- `return entries`：復元した一覧を返す。
+- `def load_result_snapshot_file(path):`：保存ファイルを開く関数。
+- `"""戻り値: (保存ファイルの辞書, 結果エントリのリスト)"""`：辞書とエントリの両方を返す。
+- `with open(path, "r", encoding="utf-8") as f:`：UTF-8で開く。
+- `data = json.load(f)`：JSONとして読み込む。
+- `return data, snapshot_to_entries(data)`：検証と変換をした結果を返す。
+- `def compare_result_sets(old_entries, new_entries):`：2つの検索結果を比べる関数。
+- `"""2つの検索結果を比較する。戻り値: (追加されたもの, 削除されたもの, 変更されたもの)。追加/削除はエントリのリスト、変更は(旧エントリ, 新エントリ)のリスト。パスの比較は大文字小文字・区切り文字の違いを吸収する。フォルダは中身の増減で更新日時が変わるだけなので「変更」には含めない。サイズ/更新日時が不明(保持上限超過後など)の側がある場合は変更とみなさない。"""`：比較のルールを示すdocstring。
+- `def _key(p):`：パス比較用のキーを作る内部関数。
+- `return os.path.normcase(os.path.normpath(p))`：正規化して大文字小文字や区切り文字の違いを吸収する。
+- `old_map = {_key(e['path']): e for e in old_entries}`：旧結果をパスで引ける辞書にする。
+- `new_map = {_key(e['path']): e for e in new_entries}`：新結果も同じく辞書にする。
+- `added = [e for k, e in new_map.items() if k not in old_map]`：新結果にだけあるものが追加。
+- `removed = [e for k, e in old_map.items() if k not in new_map]`：旧結果にだけあるものが削除。
+- `changed = []`：変更一覧を作る。
+- `for k, new_e in new_map.items():`：新結果を1件ずつ見る。
+- `old_e = old_map.get(k)`：同じパスの旧エントリを探す。
+- `if old_e is None or new_e.get('is_dir') or old_e.get('is_dir'):`：旧になかった、またはどちらかがフォルダなら変更扱いにしない。
+- `continue`：次の件へ進む。
+- `old_size, new_size = old_e.get('size_bytes', -1), new_e.get('size_bytes', -1)`：旧と新のサイズを取り出す。
+- `size_diff = old_size >= 0 and new_size >= 0 and old_size != new_size`：両方ともサイズが分かっていて違う場合だけ差ありとする。
+- `old_m, new_m = old_e.get('mtime') or '', new_e.get('mtime') or ''`：旧と新の更新日時を取り出す。
+- `mtime_diff = bool(old_m) and bool(new_m) and old_m != new_m`：両方とも日時があって違う場合だけ差ありとする。
+- `if size_diff or mtime_diff:`：サイズか日時のどちらかが違う場合。
+- `changed.append((old_e, new_e))`：旧と新のペアで記録する。
+- `added.sort(key=lambda e: e['path'].lower())`：追加をパス順に並べる。
+- `removed.sort(key=lambda e: e['path'].lower())`：削除もパス順に並べる。
+- `changed.sort(key=lambda pair: pair[1]['path'].lower())`：変更も新しい方のパス順に並べる。
+- `return added, removed, changed`：3つをまとめて返す。
+
+### **第3章：Windows既知フォルダとクイック選択・リムーバブル**
+
+- `def _windows_known_folder(folder_guid):`：Windowsの既知フォルダの実パスを返す関数。
+- `"""Windowsの既知フォルダ(デスクトップ・ダウンロード等)の実パスを返す。OneDriveによるリダイレクトや保存先の変更にも追従できる。失敗時はNone。"""`：`OneDrive` で場所が変わっていても追える利点。
+- `try:`：API呼び出しの例外に備える。
+- `import ctypes`：Windows API用に `ctypes` を読み込む。
+- `from ctypes import wintypes`：Windowsの型を使う。
+- `class _GUID(ctypes.Structure):`：GUID用の構造体。
+- `_fields_ = [("Data1", wintypes.DWORD), ("Data2", wintypes.WORD), ("Data3", wintypes.WORD), ("Data4", ctypes.c_ubyte * 8)]`：GUIDの4つの部分を定義する。
+- `guid = _GUID()`：GUIDの入れ物を作る。
+- `ole32 = ctypes.windll.ole32`：`ole32` を使う。
+- `shell32 = ctypes.windll.shell32`：`shell32` を使う。
+- `ole32.CLSIDFromString.argtypes = [ctypes.c_wchar_p, ctypes.POINTER(_GUID)]`：GUID文字列を構造体へ変換する関数の引数型を指定する。
+- `if ole32.CLSIDFromString(folder_guid, ctypes.byref(guid)) != 0:`：変換に失敗した場合。
+- `return None`：失敗として `None` を返す。
+- `shell32.SHGetKnownFolderPath.argtypes = [ctypes.POINTER(_GUID), wintypes.DWORD, wintypes.HANDLE, ctypes.POINTER(ctypes.c_void_p)]`：既知フォルダのパス取得関数の引数型を指定する。
+- `path_ptr = ctypes.c_void_p()`：パスを受け取るポインタ。
+- `result = shell32.SHGetKnownFolderPath(ctypes.byref(guid), 0, None, ctypes.byref(path_ptr))`：既知フォルダのパスを取得する。
+- `try:`：取得したポインタの解放のため。
+- `if result != 0 or not path_ptr.value:`：失敗、またはパスがない場合。
+- `return None`：失敗として返す。
+- `return ctypes.wstring_at(path_ptr.value)`：ポインタ先の文字列をPythonの文字列にして返す。
+- `finally:`：必ずメモリを解放する。
+- `if path_ptr.value:`：ポインタがある場合。
+- `ole32.CoTaskMemFree.argtypes = [ctypes.c_void_p]`：解放関数の引数型を指定する。
+- `ole32.CoTaskMemFree(path_ptr)`：OSが確保したメモリを解放する。
+- `except Exception as exc:`：例外を捕捉する。
+- `log_error("既知フォルダ取得", f"{folder_guid}: {exc}")`：失敗内容をログに残す。
+- `return None`：失敗として返す。
+- `# (表示名, Windows既知フォルダGUID, ホーム直下のフォールバック名)`：クイック選択の仕様コメント。
+- `_QUICK_FOLDER_SPECS = (("🖥 デスクトップ", "{B4BFCC3A-DB2C-424C-B029-7FE99A87C641}", "Desktop"), ("⬇ ダウンロード", "{374DE290-123F-4565-9164-39C4925E467B}", "Downloads"), ("📄 ドキュメント", "{FDD39AD0-238F-46AF-ADB4-6C85480369C7}", "Documents"), ("🖼 ピクチャ", "{33E28130-4E1E-4676-835A-98395C3BC3BB}", "Pictures"),)`：表示名とGUIDとフォールバック名の組。
+- `def get_quick_folder_presets():`：クイック選択用のフォルダ一覧を返す関数。
+- `"""検索範囲のクイック選択用に、実在するフォルダだけを(表示名, パス)で返す。"""`：実在するものだけ返す。
+- `home = os.path.expanduser("~")`：ホームフォルダを取得する。
+- `presets = []`：一覧を作る。
+- `for label, guid, fallback in _QUICK_FOLDER_SPECS:`：仕様を1つずつ見る。
+- `path = _windows_known_folder(guid) if os.name == "nt" else None`：Windowsなら既知フォルダ、それ以外は `None`。
+- `if not path or not os.path.isdir(path):`：パスが取れない、またはフォルダでない場合。
+- `path = os.path.join(home, fallback)`：ホーム直下のフォールバック名で試す。
+- `if os.path.isdir(path):`：フォルダとして実在する場合。
+- `presets.append((label, path))`：一覧に追加する。
+- `return presets`：一覧を返す。
+- `def list_removable_drives():`：USBメモリなどのリムーバブルドライブを返す関数。
+- `"""接続中のUSBメモリ等(リムーバブルドライブ)を(表示名, ルートパス)で返す。Windows以外では/media・/run/media配下のマウント済みボリュームを返す。※外付けHDD/SSDはOS上「固定ドライブ」として扱われることがあり、その場合は含まれない。"""`：外付けHDDが含まれない場合がある注意書き。
+- `drives = []`：一覧を作る。
+- `try:`：取得処理の例外に備える。
+- `if sys.platform.startswith("win"):`：Windowsの場合。
+- `import ctypes`：Windows API用に読み込む。
+- `kernel32 = ctypes.windll.kernel32`：`kernel32` を使う。
+- `bitmask = kernel32.GetLogicalDrives()`：ドライブ一覧をビットマスクで取得する。
+- `for i in range(26):`：AからZまで見る。
+- `if not bitmask & (1 << i):`：そのドライブがない場合。
+- `continue`：次へ進む。
+- `root = f"{chr(65 + i)}:\\"`：ドライブ文字からルートパスを作る。
+- `if kernel32.GetDriveTypeW(root) != 2 or not os.path.isdir(root):`：リムーバブル（2）でない、またはフォルダでない場合。
+- `continue`：対象外として飛ばす。
+- `label_buf = ctypes.create_unicode_buffer(261)`：ボリュームラベル用のバッファ。
+- `ok = kernel32.GetVolumeInformationW(root, label_buf, 261, None, None, None, None, 0)`：ボリューム情報を取得する。
+- `label = label_buf.value if ok else ""`：成功したらラベル、失敗なら空文字。
+- `drives.append((f"{root[:2]}  {label}" if label else root[:2], root))`：ラベルがあれば表示名に含める。
+- `else:`：Windows以外の場合。
+- `user = os.environ.get("USER") or os.path.basename(os.path.expanduser("~"))`：ユーザー名を取得する。
+- `for base in (f"/media/{user}", f"/run/media/{user}"):`：マウント場所の候補を見る。
+- `if os.path.isdir(base):`：その場所がある場合。
+- `for name in sorted(os.listdir(base)):`：中身を名前順に見る。
+- `full = os.path.join(base, name)`：フルパスを作る。
+- `if os.path.isdir(full):`：フォルダなら。
+- `drives.append((name, full))`：一覧に追加する。
+- `except Exception as exc:`：例外を捕捉する。
+- `log_error("リムーバブルドライブ一覧", str(exc))`：失敗内容をログに残す。
+- `return drives`：一覧を返す。失敗しても空の一覧を返す。
+
+### **第4章：ツリー走査 `_scan_tree`**
+
+- `def _scan_tree(root_dir, stop_event, _visited=None, errors=None, exclude_folders=None):`：フォルダツリーを走査してファイルを1件ずつ返すジェネレータ。
+- `# 修正4: 循環検出はos.path.islink()による判定ではなく、実体パス(realpath)の集合(_visited)で行っている。Windowsのジャンクション(Junction)やNTFSのReparse Pointは os.path.islink() では検知できないことがあるが、Python 3.8+のos.path.realpath()はこれらも解決するため、実体パスが既に訪問済みであれば(ジャンクションが親フォルダを指す自己参照ループ等でも)正しく無限ループを防げる。realpath()自体が失敗する壊れたリパースポイントは例外がOSErrorとして送出され、呼び出し側でスキップ(descend しない)されるため安全側に倒れる。`：循環検出を実体パスでやる理由。
+- `# 修正(v0.8.7・安定性): 従来はサブフォルダの走査を「yield from _scan_tree(sub, ...)」というPythonの再帰呼び出しで行っていたため、node_modules配下や展開済みバックアップなど、フォルダ階層が数百〜千段規模まで深いケースでPythonの再帰上限に達し RecursionError となり、インデックス作成全体が失敗する不具合があった。ここでは自前のスタック(リスト)を使った反復処理に置き換え、階層の深さに依存せず安定して走査できるようにする(動作・戻り値の形式は従来と同一で、生成順序も従来の深さ優先探索と一致する)。`：再帰からスタックへ変えた理由。
+- `if _visited is None:`：訪問済み集合が渡されていない場合。
+- `_visited = {os.path.normcase(os.path.realpath(root_dir))}`：ルートの実体パスを最初に入れる。
+- `stack = [root_dir]`：走査するフォルダのスタック。
+- `while stack:`：スタックが空になるまで続ける。
+- `if stop_event.is_set():`：中止要求がある場合。
+- `return`：走査をやめる。
+- `current_dir = stack.pop()`：スタックから1フォルダ取り出す。
+- `subdirs = []`：このフォルダで見つかったサブフォルダ一覧。
+- `try:`：`scandir` の例外に備える。
+- `with os.scandir(current_dir) as it:`：フォルダの中身を開く。
+- `for entry in it:`：中身を1件ずつ見る。
+- `if stop_event.is_set():`：中止要求がある場合。
+- `return`：走査をやめる。
+- `# 修正(v0.8.2・安定性): 以前は entry.is_dir() 自体が例外(壊れたリパースポイント・特殊デバイスファイル等でOSErrorになるケースがある)を送出した場合、except節ではsize/mtimeしかデフォルト値を設定しておらず、is_dirが未定義のままyieldへ到達してUnboundLocalErrorとなり、このジェネレータ全体(延いてはインデックス作成・検索全体)が異常終了してしまうバグがあった。is_dir判定とstat取得を分離し、どちらが失敗しても他のエントリの走査を継続できるようにする。`：`is_dir` と `stat` を分けた理由。
+- `try:`：種別判定の例外に備える。
+- `is_dir = entry.is_dir(follow_symlinks=False)`：リンク先をたどらずにフォルダか判定する。
+- `except OSError as exc:`：判定に失敗した場合。
+- `log_error("フォルダ走査(種別判定)", f"{entry.path}: {exc}")`：失敗内容をログに残す。
+- `if errors is not None:`：エラー一覧を受け取る場合。
+- `err_type, message = _classify_access_error(entry.path, exc)`：例外を種類分けする。
+- `errors.append({'path': entry.path, 'type': err_type, 'message': message})`：エラー一覧に追加する。
+- `continue`：そのエントリは飛ばして次へ進む。
+- `# 修正(v0.9.7・インデックスの除外フォルダ): 除外指定されたフォルダは一覧にも載せず、配下へも降りない。`：除外フォルダは一覧にも載せない方針。
+- `if is_dir and exclude_folders and entry.name.lower() in exclude_folders:`：フォルダで除外指定に該当する場合。
+- `continue`：そのフォルダは飛ばす。
+- `try:`：`stat` 取得の例外に備える。
+- `st = entry.stat(follow_symlinks=False)`：リンク先をたどらずに情報を取得する。
+- `size = None if is_dir else st.st_size`：フォルダならサイズなし、ファイルならサイズありとする。
+- `mtime = datetime.fromtimestamp(st.st_mtime).strftime("%Y-%m-%d %H:%M")`：更新日時を文字列に変換する。
+- `except OSError:`：`stat` に失敗した場合。
+- `size, mtime = (None, '')`：サイズ不明、日時空文字として続ける。
+- `except (OverflowError, ValueError) as exc:`：日時変換で極端な値が出た場合。
+- `# 修正(v0.8.2): st_mtimeが極端な値(壊れたファイルシステム情報等)の場合にdatetime.fromtimestamp()がOverflowError/ValueErrorを送出しうる。これも1件のエントリだけスキップして継続する。`：日時変換の失敗も1件だけ飛ばす理由。
+- `log_error("フォルダ走査(日時変換)", f"{entry.path}: {exc}")`：失敗内容をログに残す。
+- `size, mtime = (None, '')`：同じく不明として続ける。
+- `yield (entry.path, entry.name, is_dir, size, mtime)`：1件分の情報を呼び出し元へ返す。
+- `if not is_dir:`：ファイルならここまで。
+- `continue`：次へ進む。
+- `try:`：実体パス取得の例外に備える。
+- `real = os.path.normcase(os.path.realpath(entry.path))`：サブフォルダの実体パスを取得する。
+- `except OSError:`：取得に失敗した場合。
+- `real = None`：実体パス不明とする。
+- `if real is not None and real in _visited:`：既に訪問済みの場合。
+- `continue`：循環なので降りない。
+- `if real is not None:`：実体パスが分かる場合。
+- `_visited.add(real)`：訪問済みに追加する。
+- `subdirs.append(entry.path)`：後で走査するサブフォルダとして控える。
+- `except OSError as exc:`：フォルダ自体が開けなかった場合。
+- `if errors is not None:`：エラー一覧がある場合。
+- `err_type, message = _classify_access_error(current_dir, exc)`：例外を種類分けする。
+- `errors.append({'path': current_dir, 'type': err_type, 'message': message})`：エラー一覧に追加する。
+- `continue`：そのフォルダは飛ばして次へ進む。
+- `# 深さ優先探索の順序(従来の再帰版と同じ順序)を保つため、直前に見つかったサブフォルダを逆順に積んでから次を取り出す。`：深さ優先の順序を保つ工夫。
+- `stack.extend(reversed(subdirs))`：逆順に積んで次に取り出す順序を揃える。
+
+### **第5章：権限事前チェック**
+
+- `def _check_folder_accessibility(root_dir, stop_event, on_progress=None):`：検索前にフォルダが開けるか事前に調べる関数。
+- `errors = []`：エラー一覧。
+- `checked = [0]`：調べたフォルダ数をリストで持つ。内部関数から書き換えられるようにするため。
+- `try:`：実体パス取得の例外に備える。
+- `visited = {os.path.normcase(os.path.realpath(root_dir))}`：ルートの実体パスを訪問済みに入れる。
+- `except OSError:`：取得に失敗した場合。
+- `visited = set()`：空の集合で始める。
+- `def _walk(start_path):`：実際に歩く内部関数。
+- `# 修正(v0.8.7・安定性): _scan_tree()と同様の理由で、再帰呼び出しを自前のスタックによる反復処理に置き換える。深いフォルダ階層でもRecursionErrorにならず、権限事前チェックの結果(errors/checked)が失われないようにする。`：ここも再帰をやめてスタックにした理由。
+- `stack = [start_path]`：走査するフォルダのスタック。
+- `while stack:`：スタックが空になるまで続ける。
+- `if stop_event.is_set():`：中止要求がある場合。
+- `return`：チェックをやめる。
+- `path = stack.pop()`：1フォルダ取り出す。
+- `checked[0] += 1`：調べた数を増やす。
+- `if on_progress and checked[0] % 25 == 0:`：25件ごとに進捗を伝える場合。
+- `on_progress(checked[0], len(errors))`：進捗を呼び出し元へ伝える。
+- `try:`：`scandir` の例外に備える。
+- `with os.scandir(path) as it:`：フォルダを開く。
+- `entries = list(it)`：中身を一覧化する。
+- `except OSError as exc:`：開けなかった場合。
+- `err_type, message = _classify_access_error(path, exc)`：例外を種類分けする。
+- `errors.append({'path': path, 'type': err_type, 'message': message})`：エラー一覧に追加する。
+- `continue`：次へ進む。
+- `subdirs = []`：サブフォルダ一覧。
+- `for entry in entries:`：中身を1件ずつ見る。
+- `if stop_event.is_set():`：中止要求がある場合。
+- `return`：チェックをやめる。
+- `try:`：種別判定の例外に備える。
+- `is_dir = entry.is_dir(follow_symlinks=False)`：リンクをたどらずにフォルダか判定する。
+- `except OSError as exc:`：判定に失敗した場合。
+- `err_type, message = _classify_access_error(entry.path, exc)`：例外を種類分けする。
+- `errors.append({'path': entry.path, 'type': err_type, 'message': message})`：エラー一覧に追加する。
+- `continue`：そのエントリは飛ばす。
+- `if not is_dir:`：ファイルならここまで。
+- `continue`：次へ進む。
+- `try:`：実体パス取得の例外に備える。
+- `real = os.path.normcase(os.path.realpath(entry.path))`：サブフォルダの実体パスを取得する。
+- `except OSError:`：取得に失敗した場合。
+- `real = None`：不明とする。
+- `if real is not None:`：実体パスが分かる場合。
+- `if real in visited:`：既に訪問済みの場合。
+- `continue`：循環なので降りない。
+- `visited.add(real)`：訪問済みに追加する。
+- `subdirs.append(entry.path)`：後で調べるサブフォルダとして控える。
+- `# 深さ優先探索の順序(従来の再帰版と同じ順序)を保つため、直前に見つかったサブフォルダを逆順に積んでから次を取り出す。`：順序を保つ工夫。
+- `stack.extend(reversed(subdirs))`：逆順に積む。
+- `if not os.path.exists(root_dir):`：ルート自体がない場合。
+- `errors.append({'path': root_dir, 'type': 'not_found', 'message': "フォルダが見つかりません"})`：見つからないとして記録する。
+- `return errors, checked[0]`：エラー一覧と調べた数を返す。
+- `_walk(root_dir)`：実際に歩く。
+- `return errors, checked[0]`：結果を返す。
+
+### **第6章：権限チェックワーカーとインデックス作成ワーカー**
+
+- `class PermissionCheckWorker(threading.Thread):`：権限チェックを別スレッドで行うクラス。
+- `def __init__(self, root_dir, on_progress=None, on_done=None):`：初期化。対象フォルダとコールバックを受け取る。
+- `super().__init__(daemon=True)`：デーモンスレッドとして初期化する。アプリ終了時に道連れで終わる。
+- `self.root_dir = root_dir`：対象フォルダを保持する。
+- `self.on_progress = on_progress`：進捗コールバックを保持する。
+- `self.on_done = on_done`：完了コールバックを保持する。
+- `self.stop_event = threading.Event()`：中止用のイベント。
+- `def stop(self):`：中止を要求する関数。
+- `self.stop_event.set()`：イベントを立てる。
+- `def run(self):`：スレッドの本体。
+- `try:`：チェック全体の例外に備える。
+- `errors, checked = _check_folder_accessibility(self.root_dir, self.stop_event, on_progress=self.on_progress)`：事前チェックを実行する。
+- `except Exception as exc:`：想定外の例外を捕捉する。
+- `log_error("権限事前チェック", str(exc))`：失敗内容をログに残す。
+- `errors, checked = [], 0`：失敗時は空の結果として扱う。
+- `if self.on_done:`：完了コールバックがある場合。
+- `self.on_done(errors, checked, self.stop_event.is_set())`：結果と中止されたかどうかを伝える。
+- `class IndexBuildWorker(threading.Thread):`：インデックス作成を別スレッドで行うクラス。
+- `PROGRESS_EVERY = 50`：50件ごとに進捗を伝える。
+- `BATCH_SIZE = 200`：200件ごとにDBへ書き込む。
+- `def __init__(self, manager, root_dir, on_progress=None, on_done=None, on_error=None, exclude_folders=None):`：初期化。
+- `super().__init__(daemon=True)`：デーモンスレッドとして初期化する。
+- `self.manager = manager`：インデックス管理クラスを保持する。
+- `self.root_dir = root_dir`：対象フォルダを保持する。
+- `self.exclude_folders = {e.lower() for e in (exclude_folders or ()) if e}`：除外フォルダを小文字の集合にする。
+- `self.on_progress = on_progress`：進捗コールバックを保持する。
+- `self.on_done = on_done`：完了コールバックを保持する。
+- `self.on_error = on_error`：エラーコールバックを保持する。
+- `self._stop_event = threading.Event()`：中止用のイベント。
+- `def stop(self):`：中止を要求する関数。
+- `self._stop_event.set()`：イベントを立てる。
+- `def run(self):`：スレッドの本体。
+- `self.manager.begin_write()`：書き込みロックを取る。
+- `# 修正(v0.8.5): アプリ終了時(shutdown())にこのワーカーがIndexManagerDialog等の手動操作で起動されたものであっても、manager.stop_all_workers()経由でstop()を呼びかけられるように自身を登録しておく。`：終了時に止められるよう登録する理由。
+- `self.manager.register_worker(self)`：自身を登録する。
+- `self.manager.mark_building(self.root_dir)`：作成中として印を付ける。
+- `try:`：作成処理の例外に備える。
+- `if not os.path.isdir(self.root_dir):`：対象がフォルダでない場合。
+- `self.on_error(f"フォルダが見つかりません: {self.root_dir}")`：エラーとして伝える。
+- `return`：作成をやめる。
+- `self._build()`：作成本体を呼ぶ。
+- `except Exception as exc:`：想定外の例外を捕捉する。
+- `log_error("インデックス作成", f"{self.root_dir}: {exc}")`：失敗内容をログに残す。
+- `self.on_error(str(exc))`：エラーとして伝える。
+- `finally:`：後始末は必ず行う。
+- `self.manager.unmark_building(self.root_dir)`：作成中の印を消す。
+- `self.manager.unregister_worker(self)`：登録を解除する。
+- `self.manager.end_write()`：書き込みロックを解放する。
+- `def _build(self):`：DB接続を作って本体へ渡す関数。
+- `conn = self.manager._connect()`：DB接続を取得する。
+- `count = 0`：処理した件数。
+- `current_size = 0`：合計サイズ。
+- `changed_count = 0`：変わった件数。
+- `access_errors = []`：アクセスエラー一覧。
+- `try:`：本体の例外に備える。
+- `self._build_body(conn, access_errors, count, current_size, changed_count)`：本体を呼ぶ。引数は参照渡しのつもりだが、数値は後で戻り値として使われる点に注意。
+- `except sqlite3.Error as exc:`：DBエラーを捕捉する。
+- `# 修正(v0.8.4・部分書き込み対策): executemanyやcommitが途中で失敗した場合、従来はconn.close()時の暗黙のロールバックに頼っていたが、SQLiteドライバの実装差異に依存せず確実に未コミット分を破棄するため、ここで明示的にrollback()してからrun()側の例外ハンドラへ再送出する(index_metaの更新はこの関数の最後で行われるため、途中で例外になればindex_meta自体は更新されず、files側の一部だけが古いままになることはあっても、両者が矛盾した状態でコミットされることは無い)。`：明示的にロールバックする理由。
+- `try:`：ロールバック自体の例外に備える。
+- `conn.rollback()`：未コミット分を破棄する。
+- `except sqlite3.Error as rollback_exc:`：ロールバックに失敗した場合。
+- `log_error("インデックス作成(rollback)", f"{self.root_dir}: {rollback_exc}")`：失敗内容をログに残す。
+- `log_error("インデックス作成(SQLite)", f"{self.root_dir}: {exc}")`：元の失敗内容をログに残す。
+- `raise`：呼び出し元へ再送出する。
+- `finally:`：接続を必ず閉じる。
+- `conn.close()`：DB接続を閉じる。
+- `def _build_body(self, conn, access_errors, count, current_size, changed_count):`：実際の作成本体。
+- `"""実際のインデックス作成本体。SQLite例外は_build()側で捕捉し、rollback()してから再送出する(呼び出し元run()が最終的にログ・on_error通知を行う)。"""`：例外の流れを示すdocstring。
+- `existing = dict(conn.execute("SELECT path, mtime FROM files WHERE root = ?", (self.root_dir,)).fetchall())`：既存のパスと更新日時を辞書にする。
+- `seen_paths = set()`：今回見つかったパスを入れる集合。
+- `batch = []`：書き込み用のバッチ。
+- `for full_path, name, is_dir, size, mtime in _scan_tree(self.root_dir, self._stop_event, errors=access_errors, exclude_folders=self.exclude_folders):`：ツリー走査で1件ずつ見る。
+- `if self._stop_event.is_set():`：中止要求がある場合。
+- `break`：走査をやめる。
+- `seen_paths.add(full_path)`：見つかったパスとして記録する。
+- `dirpath = os.path.dirname(full_path)`：親フォルダを取得する。
+- `if size:`：サイズがある場合。
+- `current_size += size`：合計サイズに加える。
+- `count += 1`：件数を増やす。
+- `if existing.get(full_path) != mtime:`：既存と更新日時が違う、新規の場合。
+- `batch.append((full_path, name, dirpath, size, mtime, int(is_dir), self.root_dir))`：バッチに追加する。
+- `changed_count += 1`：変わった件数を増やす。
+- `if len(batch) >= self.BATCH_SIZE:`：バッチが200件たまった場合。
+- `conn.executemany("INSERT OR REPLACE INTO files (path, name, dir, size, mtime, is_dir, root) VALUES (?,?,?,?,?,?,?)", batch)`：まとめて書き込む。
+- `self.manager._sync_fts_batch(conn, batch)`：FTS側も同期する。
+- `conn.commit()`：確定する。
+- `batch.clear()`：バッチを空にする。
+- `if count % self.PROGRESS_EVERY == 0:`：50件ごとに。
+- `self.on_progress(current_size, None, count)`：進捗を伝える。
+- `if batch:`：残ったバッチがある場合。
+- `conn.executemany("INSERT OR REPLACE INTO files (path, name, dir, size, mtime, is_dir, root) VALUES (?,?,?,?,?,?,?)", batch)`：残りも書き込む。
+- `self.manager._sync_fts_batch(conn, batch)`：FTS側も同期する。
+- `conn.commit()`：確定する。
+- `stopped = self._stop_event.is_set()`：中止されたかどうかを記録する。
+- `deleted_count = 0`：削除件数を初期化する。
+- `if not stopped:`：中止されていない場合だけ削除判定をする。
+- `# アクセスエラーが発生したフォルダ配下は、今回のスキャンで存在確認ができなかっただけの可能性が高いため、削除(stale)扱いにせずインデックスに残しておく。`：エラー配下は削除しない理由。
+- `error_dirs = {os.path.normcase(os.path.normpath(e['path'])) for e in access_errors}`：エラーがあったフォルダの集合を作る。
+- `def _under_error_dir(path):`：エラー配下かどうかを判定する内部関数。
+- `dirname = os.path.normcase(os.path.normpath(os.path.dirname(path)))`：対象の親フォルダを正規化する。
+- `return any(is_path_within(dirname, d) or dirname == d for d in error_dirs)`：エラー配下か、エラー配下そのものかを返す。
+- `stale_paths = [p for p in existing if p not in seen_paths and not _under_error_dir(p)]`：既存にあって今回見つからず、エラー配下でもないものが削除対象。
+- `if stale_paths:`：削除対象がある場合。
+- `deleted_count = len(stale_paths)`：削除件数を記録する。
+- `for i in range(0, len(stale_paths), self.BATCH_SIZE):`：200件ずつに分ける。
+- `chunk = stale_paths[i:i + self.BATCH_SIZE]`：1チャンク取り出す。
+- `conn.executemany("DELETE FROM files WHERE path = ?", [(p,) for p in chunk])`：まとめて削除する。
+- `self.manager._sync_fts_delete(conn, chunk)`：FTS側も削除する。
+- `conn.commit()`：確定する。
+- `final_total = current_size`：最終的な合計サイズ。
+- `indexed_at = datetime.now().strftime("%Y-%m-%d %H:%M")`：作成日時を作る。
+- `conn.execute("INSERT OR REPLACE INTO index_meta (root, indexed_at, file_count, total_size) VALUES (?,?,?,?)", (self.root_dir, indexed_at, count, final_total))`：メタ情報を更新する。
+- `conn.commit()`：確定する。
+- `self.manager.save_access_errors(self.root_dir, access_errors)`：アクセスエラーを保存する。
+- `self.manager.dirty = True`：DBが変わったことを示す。
+- `self.manager._invalidate_roots_cache()`：ルート一覧のキャッシュを無効化する。
+- `# インデックス作成完了のタイミング(負荷の低いタイミング)でクエリプランナ用の統計情報を軽量に更新しておく。`：完了時に統計を更新する理由。
+- `try:`：`PRAGMA optimize` の例外に備える。
+- `conn.execute("PRAGMA optimize")`：統計を軽量に更新する。
+- `except sqlite3.Error:`：失敗しても無視する。
+- `pass`：失敗しても作成自体は成功扱いにする。
+- `self.on_progress(current_size, final_total, count)`：最終進捗を伝える。
+- `self.on_done(count, final_total, stopped, {'changed': changed_count, 'deleted': deleted_count})`：完了を伝える。
+
+### **第7章：インデックス検索ワーカー**
+
+- `class IndexSearchWorker(threading.Thread):`：インデックス検索を別スレッドで行うクラス。
+- `BATCH_SIZE = 50`：50件ごとに結果を返す。
+- `BATCH_INTERVAL = 0.15`：0.15秒ごとに結果を返す。
+- `def __init__(self, manager, root, scope_dir, keyword, ext_filter, ignore_case, match_mode, search_folders_too, exclude_ext, include_hidden, exclude_folders=None, size_min=None, size_max=None, mtime_from=None, mtime_to=None, content_search=False, on_result_batch=None, on_done=None, on_error=None, batch_size=None, batch_interval=None, content_search_extensions=None, ignore_width=False, include_system=True, search_target='name', exclude_filename_patterns=None, exclude_temp=False):`：検索条件とコールバックをまとめて受け取る。
+- `super().__init__(daemon=True)`：デーモンスレッドとして初期化する。
+- `if batch_size:`：バッチサイズの指定がある場合。
+- `self.BATCH_SIZE = batch_size`：指定値で上書きする。
+- `if batch_interval:`：バッチ間隔の指定がある場合。
+- `self.BATCH_INTERVAL = batch_interval`：指定値で上書きする。
+- `self.manager = manager`：管理クラスを保持する。
+- `self.root = root`：対象ルートを保持する。
+- `self.scope_dir = scope_dir`：検索範囲を保持する。
+- `self.keyword = keyword`：キーワードを保持する。
+- `self.ext_filter = normalize_ext_filter(ext_filter)`：拡張子フィルタを正規化して保持する。
+- `self.exclude_ext = normalize_ext_filter(exclude_ext)`：除外拡張子も正規化する。
+- `self.ignore_case = ignore_case`：大文字小文字を無視するかを保持する。
+- `self.match_mode = match_mode`：マッチ方式を保持する。
+- `self.search_folders_too = search_folders_too`：フォルダも対象にするかを保持する。
+- `self.include_hidden = include_hidden`：隠しファイルを含めるかを保持する。
+- `# 修正(v0.9.6): システムファイルの個別除外・全角半角無視・検索対象。`：追加された設定のコメント。
+- `self.include_system = include_system`：システムファイルを含めるかを保持する。
+- `self.ignore_width = ignore_width`：全角半角を無視するかを保持する。
+- `self.search_target = search_target`：検索対象を保持する。
+- `# 修正(v0.9.6・除外ファイル名/一時ファイルを除外)`：除外関連の修正コメント。
+- `self.exclude_filename_patterns = exclude_filename_patterns or set()`：除外ファイル名パターンを保持する。
+- `self.exclude_temp = exclude_temp`：一時ファイルを除外するかを保持する。
+- `self.exclude_folders = exclude_folders or set()`：除外フォルダを保持する。
+- `self.size_min = size_min`：最小サイズを保持する。
+- `self.size_max = size_max`：最大サイズを保持する。
+- `self.mtime_from = mtime_from`：更新日時の開始を保持する。
+- `self.mtime_to = mtime_to`：更新日時の終了を保持する。
+- `self.content_search = content_search`：内容検索するかを保持する。
+- `self.content_search_extensions = content_search_extensions`：内容検索の対象拡張子を保持する。
+- `self.on_result_batch = on_result_batch`：結果バッチ用のコールバックを保持する。
+- `self.on_done = on_done`：完了コールバックを保持する。
+- `self.on_error = on_error`：エラーコールバックを保持する。
+- `self._stop_event = threading.Event()`：中止用のイベント。
+- `# 修正(v0.9.6・検索中の一時停止)`：一時停止対応のコメント。
+- `self._pause_event = threading.Event()`：一時停止用のイベント。
+- `self._pause_event.set()`：最初は一時停止していない状態にする。
+- `def stop(self):`：中止を要求する関数。
+- `self._stop_event.set()`：中止イベントを立てる。
+- `self._pause_event.set()`：一時停止も解除して止まれるようにする。
+- `def pause(self):`：一時停止する関数。
+- `self._pause_event.clear()`：一時停止イベントを下ろす。
+- `def resume(self):`：再開する関数。
+- `self._pause_event.set()`：一時停止イベントを立てる。
+- `def _wait_while_paused(self):`：一時停止中は待つ関数。
+- `while not self._pause_event.is_set():`：一時停止が解除されるまで待つ。
+- `if self._stop_event.is_set():`：待っている間に中止された場合。
+- `return True`：中止されたとして返す。
+- `time.sleep(0.1)`：0.1秒待って再確認する。
+- `return False`：中止されていないとして返す。
+- `def run(self):`：スレッドの本体。
+- `try:`：検索全体の例外に備える。
+- `batch = []`：結果バッチ。
+- `last_flush = time.time()`：最後に結果を返した時刻。
+- `for item in self.manager.search(self.root, self.scope_dir, self.keyword, self.ext_filter, self.ignore_case, self.match_mode, self.search_folders_too, exclude_ext=self.exclude_ext, include_hidden=self.include_hidden, exclude_folders=self.exclude_folders, size_min=self.size_min, size_max=self.size_max, mtime_from=self.mtime_from, mtime_to=self.mtime_to, content_search=self.content_search, content_search_extensions=self.content_search_extensions, ignore_width=self.ignore_width, include_system=self.include_system, search_target=self.search_target, exclude_filename_patterns=self.exclude_filename_patterns, exclude_temp=self.exclude_temp, stop_event=self._stop_event):`：管理クラスの検索を1件ずつ受け取る。
+- `if self._stop_event.is_set():`：中止要求がある場合。
+- `break`：検索をやめる。
+- `if self._wait_while_paused():`：一時停止中で中止された場合。
+- `break`：検索をやめる。
+- `batch.append(item)`：バッチに追加する。
+- `now = time.time()`：現在時刻を取得する。
+- `if len(batch) >= self.BATCH_SIZE or now - last_flush >= self.BATCH_INTERVAL:`：件数か時間のどちらかで区切りが来た場合。
+- `self.on_result_batch(batch)`：バッチを呼び出し元へ返す。
+- `batch = []`：バッチを空にする。
+- `last_flush = now`：最後に返した時刻を更新する。
+- `if batch:`：残ったバッチがある場合。
+- `self.on_result_batch(batch)`：残りも返す。
+- `self.on_done(self._stop_event.is_set())`：中止されたかどうかと一緒に完了を伝える。
+- `except Exception as exc:`：想定外の例外を捕捉する。
+- `log_error("インデックス検索", str(exc))`：失敗内容をログに残す。
+- `self.on_error(str(exc))`：エラーとして伝える。
+
+### **第8章：重複ファイル検索ワーカー**
+
+- `class DuplicateFinderWorker(threading.Thread):`：重複ファイルを探すクラス。
+- `HASH_CHUNK_SIZE = 1048576`：ハッシュ計算で1回に読む量。1MB。
+- `PROGRESS_EVERY = 100`：100件ごとに進捗を伝える。
+- `HASH_PROGRESS_EVERY = 20`：ハッシュ計算は20件ごとに進捗を伝える。
+- `# 修正(v0.8.7・メモリ保護): size_groups(サイズ別にパスを溜め込む辞書)は従来、保持件数の上限が無かった。SearchTab.MAX_STORED_RESULTSと同様の考え方で、非常に大量のファイル(数十万件規模)を持つフォルダを対象にした場合のメモリ圧迫を防ぐため上限を設ける。超過分は一覧には積まず、件数のみをカウントし続ける(保険的な上限であり、通常利用の件数では発動しないため、既存の挙動は変わらない)。`：メモリ保護の上限を設けた理由。
+- `MAX_SCANNED_FILES = 300000`：保持上限。30万件。
+- `def __init__(self, root_dir, recursive, min_size, ext_filter, exclude_folders=None, on_progress=None, on_done=None, on_error=None):`：初期化。
+- `super().__init__(daemon=True)`：デーモンスレッドとして初期化する。
+- `self.root_dir = root_dir`：対象フォルダを保持する。
+- `self.recursive = recursive`：再帰するかを保持する。
+- `self.min_size = min_size`：最小サイズを保持する。
+- `self.ext_filter = normalize_ext_filter(ext_filter)`：拡張子フィルタを正規化する。
+- `self.exclude_folders = exclude_folders or set()`：除外フォルダを保持する。
+- `self.on_progress = on_progress`：進捗コールバックを保持する。
+- `self.on_done = on_done`：完了コールバックを保持する。
+- `self.on_error = on_error`：エラーコールバックを保持する。
+- `self._stop_event = threading.Event()`：中止用のイベント。
+- `# 修正(v0.8.7・メモリ保護): 保持上限に達したかどうか、および実際にスキャンした総ファイル数(上限を超えても正しい件数をステータス表示できるよう別途カウントする)。`：上限用カウンタの説明。
+- `self._scanned_truncated = False`：上限で打ち切られたかを保持する。
+- `self._total_scanned_count = 0`：実際にスキャンした総数を保持する。
+- `def stop(self):`：中止を要求する関数。
+- `self._stop_event.set()`：イベントを立てる。
+- `def _hash_file(self, path):`：ファイルのハッシュを計算する関数。
+- `"""修正7: 呼び出し元でこの関数のOSErrorを個別に捕捉できるよう、ここでは例外を握り潰さずそのまま送出する(検索中に対象ファイルが削除/移動された場合など)。"""`：例外を握り潰さない方針。
+- `h = hashlib.sha256()`：SHA256のハッシュオブジェクト。
+- `with open(path, "rb") as f:`：バイナリで開く。
+- `while True:`：チャンク単位で読むループ。
+- `if self._stop_event.is_set():`：中止要求がある場合。
+- `return None`：中止として `None` を返す。
+- `chunk = f.read(self.HASH_CHUNK_SIZE)`：1MBずつ読む。
+- `if not chunk:`：読み切った場合。
+- `break`：ループを抜ける。
+- `h.update(chunk)`：ハッシュへ追加する。
+- `return h.hexdigest()`：16進数のハッシュを返す。
+- `def run(self):`：スレッドの本体。
+- `try:`：全体の例外に備える。
+- `if not os.path.isdir(self.root_dir):`：対象がフォルダでない場合。
+- `self.on_error(f"フォルダが見つかりません: {self.root_dir}")`：エラーとして伝える。
+- `return`：検索をやめる。
+- `size_groups = {}`：サイズ別にパスを溜める辞書。
+- `scanned = 0`：保持した件数。
+- `visited_real = {os.path.normcase(os.path.realpath(self.root_dir))}`：訪問済みの実体パス。
+- `for dirpath, dirnames, filenames in os.walk(self.root_dir, followlinks=False):`：`os.walk` で歩く。リンクはたどらない。
+- `if self._stop_event.is_set():`：中止要求がある場合。
+- `break`：歩くのをやめる。
+- `if self.exclude_folders:`：除外フォルダがある場合。
+- `dirnames[:] = [d for d in dirnames if d.lower() not in self.exclude_folders]`：除外フォルダを歩かないようにする。
+- `if self.recursive and dirnames:`：再帰かつサブフォルダがある場合。
+- `safe_dirnames = []`：安全なサブフォルダ一覧。
+- `for d_idx, d in enumerate(dirnames):`：サブフォルダを1つずつ見る。
+- `# 修正(v0.8.2・停止応答性): is_protected_system_dir()のrealpath解決も含め、大量サブフォルダの処理中に停止操作へ速やかに応答できるようにする。`：停止応答性のコメント。
+- `if d_idx % 500 == 0 and self._stop_event.is_set():`：500件ごとに中止を確認する。
+- `break`：中止なら抜ける。
+- `sub_path = os.path.join(dirpath, d)`：サブフォルダのフルパスを作る。
+- `if is_protected_system_dir(sub_path):`：保護対象なら。
+- `continue`：そのフォルダは飛ばす。
+- `try:`：実体パス取得の例外に備える。
+- `real = os.path.normcase(os.path.realpath(sub_path))`：実体パスを取得する。
+- `except OSError:`：取得に失敗した場合。
+- `continue`：そのフォルダは飛ばす。
+- `if real in visited_real:`：既に訪問済みの場合。
+- `continue`：循環なので飛ばす。
+- `visited_real.add(real)`：訪問済みに追加する。
+- `safe_dirnames.append(d)`：安全なフォルダとして残す。
+- `dirnames[:] = safe_dirnames`：`os.walk` に反映させる。
+- `for name in filenames:`：ファイルを1件ずつ見る。
+- `if self._stop_event.is_set():`：中止要求がある場合。
+- `break`：抜ける。
+- `full_path = os.path.join(dirpath, name)`：フルパスを作る。
+- `if self.ext_filter:`：拡張子フィルタがある場合。
+- `_, ext = os.path.splitext(name)`：拡張子を取り出す。
+- `if ext.lower().lstrip(".") not in self.ext_filter:`：対象外の拡張子の場合。
+- `continue`：飛ばす。
+- `try:`：サイズ取得の例外に備える。
+- `size = os.path.getsize(full_path)`：サイズを取得する。
+- `except OSError:`：取得に失敗した場合。
+- `continue`：そのファイルは飛ばす。
+- `if size == 0:`：0バイトの場合。
+- `continue`：重複判定の対象外とする。
+- `if self.min_size and size < self.min_size:`：最小サイズ未満の場合。
+- `continue`：対象外とする。
+- `self._total_scanned_count += 1`：実際にスキャンした総数を増やす。
+- `# 修正(v0.8.7・メモリ保護): 保持件数が上限に達した場合、それ以上size_groupsへは積まず、件数のみ集計する(通常利用の件数では発動しないため既存挙動は変わらない)。`：上限時の方針。
+- `if scanned >= self.MAX_SCANNED_FILES:`：上限に達した場合。
+- `if not self._scanned_truncated:`：まだ打ち切りフラグが立っていない場合。
+- `self._scanned_truncated = True`：打ち切りフラグを立てる。
+- `log_error("重複ファイル検索", f"スキャン対象が{self.MAX_SCANNED_FILES}件を超えたため、以降はメモリ保護のため一覧への保持を打ち切りました。")`：打ち切りをログに残す。
+- `continue`：保持せずに次へ進む。
+- `size_groups.setdefault(size, []).append(full_path)`：サイズ別にパスを溜める。
+- `scanned += 1`：保持した件数を増やす。
+- `if self.on_progress and scanned % self.PROGRESS_EVERY == 0:`：100件ごとに。
+- `self.on_progress(f"スキャン中... {scanned} 件のファイルを確認しました")`：進捗を伝える。
+- `if not self.recursive:`：再帰しない場合。
+- `break`：最初のフォルダだけで終わる。
+- `if self._stop_event.is_set():`：中止された場合。
+- `self.on_done([], True)`：空の結果と中止を伝える。
+- `return`：検索をやめる。
+- `candidates = {size: paths for size, paths in size_groups.items() if len(paths) > 1}`：同じサイズが2件以上あるものだけを候補にする。サイズが違うものは重複し得ないため。
+- `total_to_hash = sum(len(v) for v in candidates.values())`：ハッシュ計算が必要な総数。
+- `if self.on_progress:`：進捗コールバックがある場合。
+- `if self._scanned_truncated:`：打ち切りがあった場合。
+- `self.on_progress(f"同じサイズのファイル {total_to_hash} 件のハッシュを計算します..." f"（スキャン対象が{self.MAX_SCANNED_FILES}件を超えたため、一部のファイルは対象から除外されています）")`：打ち切りありで進捗を伝える。
+- `else:`：打ち切りなしの場合。
+- `self.on_progress(f"同じサイズのファイル {total_to_hash} 件のハッシュを計算します...")`：通常の進捗を伝える。
+- `hashed = 0`：ハッシュ計算済み件数。
+- `hash_groups = {}`：サイズとハッシュで分ける辞書。
+- `stopped = False`：中止されたかを保持する。
+- `skipped_errors = 0`：読み込めなかった件数。
+- `for size, paths in candidates.items():`：候補をサイズごとに見る。
+- `if stopped:`：中止された場合。
+- `break`：抜ける。
+- `for path in paths:`：同じサイズのファイルを1件ずつ見る。
+- `if self._stop_event.is_set():`：中止要求がある場合。
+- `stopped = True`：中止として記録する。
+- `break`：抜ける。
+- `try:`：ハッシュ計算の例外に備える。
+- `digest = self._hash_file(path)`：ハッシュを計算する。
+- `except OSError as exc:`：読み込めなかった場合。
+- `# 修正7: 検索(ハッシュ計算)中にファイルが削除・移動された、あるいはアクセス権限が無くなった場合でも、そのファイルだけスキップして重複検索全体は継続する(以前はここで例外がrun()の外側まで伝播し、検索全体がエラー終了していた)。`：1件だけ飛ばして続ける理由。
+- `log_error("重複ファイル検索(ハッシュ計算)", f"{path}: {exc}")`：失敗内容をログに残す。
+- `skipped_errors += 1`：読み込めなかった件数を増やす。
+- `continue`：次へ進む。
+- `if digest is None:`：ハッシュ計算中に中止された場合。
+- `stopped = True`：中止として記録する。
+- `break`：抜ける。
+- `hashed += 1`：ハッシュ計算済みを増やす。
+- `if self.on_progress and (hashed % self.HASH_PROGRESS_EVERY == 0 or hashed == total_to_hash):`：20件ごと、または最後の場合。
+- `self.on_progress(f"ハッシュ計算中... {hashed}/{total_to_hash} 件")`：進捗を伝える。
+- `hash_groups.setdefault((size, digest), []).append(path)`：サイズとハッシュの組で分ける。
+- `result = [(size, digest, paths) for (size, digest), paths in hash_groups.items() if len(paths) > 1]`：同じサイズとハッシュが2件以上あるものだけを結果にする。
+- `result.sort(key=lambda item: item[0] * (len(item[2]) - 1), reverse=True)`：無駄な容量が大きい順に並べる。サイズ×（件数-1）で概算する。
+- `if skipped_errors and self.on_progress:`：読み込めなかったものがある場合。
+- `self.on_progress(f"ハッシュ計算中に読み込めなかったファイルが{skipped_errors}件ありました（削除・移動・アクセス権限の可能性があります。スキップして続行しました）")`：スキップしたことを伝える。
+- `self.on_done(result, stopped)`：結果と中止を伝える。
+- `except Exception as exc:`：想定外の例外を捕捉する。
+- `log_error("重複ファイル検索", str(exc))`：失敗内容をログに残す。
+- `self.on_error(str(exc))`：エラーとして伝える。
+
+### **第9章：クイックコマンド**
+
+- `class QuickCommandHotkeyListener:`：Ctrl2回押しを検知するクラス。
+- `"""Ctrlキーをすばやく2回押す操作を検知するグローバルフック。修正(v0.9.6・クイックコマンド機能): アプリが最小化・裏に隠れていても検知できるよう、OSレベルのキーボードフック(keyboardライブラリ)を使う。keyboardライブラリが未導入の環境では start() がFalseを返し、呼び出し元はこの機能を無効のまま扱う(cryptography/tkinterdnd2と同様の任意依存パターン)。フックのコールバックはOS側のフック用スレッドから呼ばれるため、実際のウィンドウ操作はon_triggerコールバック側でTkinterのafter(0, ...)経由に委ねること(このクラス自体はTkinterに一切触れない)。Ctrl+Cのようにキーを押しっぱなしの状態から素早く離して再度押した場合も二重押下として検知しうるが、簡易な実装として許容する。"""`：任意依存とスレッドの注意点を示すdocstring。
+- `DOUBLE_TAP_MAX_INTERVAL_SEC = 0.4`：2回押しとみなす間隔。0.4秒以内。
+- `CTRL_KEY_NAMES = {'ctrl', 'left ctrl', 'right ctrl'}`：Ctrlとみなすキー名の集合。
+- `def __init__(self, on_trigger):`：初期化。呼ばれたときのコールバックを受け取る。
+- `self.on_trigger = on_trigger`：コールバックを保持する。
+- `self._last_press_time = 0.0`：前回の押下時刻。
+- `self._ctrl_currently_down = False`：今Ctrlが押されているかを保持する。
+- `self._hook_registered = False`：フック登録済みかを保持する。
+- `def start(self):`：フックを開始する関数。
+- `if self._hook_registered:`：既に登録済みの場合。
+- `return True`：開始済みとして返す。
+- `kb = _lazy_import_keyboard()`：`keyboard` を遅延インポートする。
+- `if kb is None:`：ライブラリがない場合。
+- `return False`：開始できないとして返す。
+- `try:`：フック登録の例外に備える。
+- `kb.hook(self._on_event, suppress=False)`：イベントフックを登録する。キーを横取りしない。
+- `self._hook_registered = True`：登録済みにする。
+- `return True`：成功として返す。
+- `except Exception as exc:`：登録失敗を捕捉する。
+- `log_error("クイックコマンド(フック登録)", str(exc))`：失敗内容をログに残す。
+- `return False`：失敗として返す。
+- `def stop(self):`：フックを解除する関数。
+- `if not self._hook_registered:`：登録されていない場合。
+- `return`：何もしない。
+- `kb = _lazy_import_keyboard()`：`keyboard` を取得する。
+- `if kb is not None:`：ライブラリがある場合。
+- `try:`：解除の例外に備える。
+- `kb.unhook(self._on_event)`：フックを解除する。
+- `except Exception as exc:`：解除失敗を捕捉する。
+- `log_error("クイックコマンド(フック解除)", str(exc))`：失敗内容をログに残す。
+- `self._hook_registered = False`：未登録にする。
+- `def _on_event(self, event):`：キーイベントごとの処理。
+- `try:`：イベント処理の例外に備える。
+- `if event.name not in self.CTRL_KEY_NAMES:`：Ctrl以外のキーなら。
+- `return`：無視する。
+- `if event.event_type == 'up':`：離したイベントなら。
+- `self._ctrl_currently_down = False`：押されていない状態にする。
+- `return`：離しただけでは何もしない。
+- `if event.event_type != 'down':`：押したイベントでない場合。
+- `return`：無視する。
+- `if self._ctrl_currently_down:`：既に押されている状態での連続 `down` の場合。
+- `# OSのキーリピートによる連続downイベントは二重押下として数えない`：キーリピートを除外する理由。
+- `return`：二重押下として数えない。
+- `self._ctrl_currently_down = True`：押されている状態にする。
+- `now = time.time()`：現在時刻を取得する。
+- `if now - self._last_press_time <= self.DOUBLE_TAP_MAX_INTERVAL_SEC:`：前回から0.4秒以内の場合。
+- `self._last_press_time = 0.0`：時刻をリセットする。
+- `self.on_trigger()`：コールバックを呼ぶ。
+- `else:`：間隔が空いた場合。
+- `self._last_press_time = now`：今回を前回として記録する。
+- `except Exception as exc:`：イベント処理の例外を捕捉する。
+- `log_error("クイックコマンド(イベント処理)", str(exc))`：失敗内容をログに残す。
+
+### **第10章：設定ダイアログの土台**
+
+- `class SettingsDialog(tk.Toplevel):`：設定ダイアログのクラス。
+- `def __init__(self, master):`：初期化。
+- `super().__init__(master)`：`Toplevel` として初期化する。
+- `self.app = master`：アプリ本体を保持する。
+- `self.title("設定")`：タイトルを「設定」にする。
+- `self.geometry("460x560")`：初期サイズを設定する。
+- `self.minsize(420, 460)`：最小サイズを設定する。
+- `self.transient(master)`：親ウィンドウに従属させる。
+- `# 修正(v0.8.9・設定画面の整理): 従来は「簡易プレビュー」「テーマ」「検索完了通知」「検索の挙動」の4セクションが1本の縦長スクロール画面に並んでおり、目的の設定を探しにくかった。ここではttk.Notebookでカテゴリ別のタブ(「表示・テーマ」「通知」「検索の挙動」)に分割し、目的の設定へすぐたどり着けるようにする。各設定項目・挙動・保存先(settings.json)は従来と完全に同一で、見た目の整理のみ。`：タブ分割した理由。見た目だけで挙動は同じ。
+- `self._mousewheel_unbinders = []`：マウスホイール解除用の関数一覧。
+- `notebook = ttk.Notebook(self)`：タブ用のNotebookを作る。
+- `notebook.pack(fill="both", expand=True, padx=8, pady=(8, 0))`：Notebookを配置する。
+- `display_tab = self._make_scrollable_tab(notebook, "表示・テーマ")`：「表示・テーマ」タブを作る。
+- `# 修正(v0.9.1・3モード実装): 通知設定はLiteモードでは非表示にする(検索速度を優先し、通知音・デスクトップ通知等の付随処理も省く)。`：Liteモードでは通知タブを出さない理由。
+- `if self.app.mode_allows('notification_settings'):`：通知設定が許可されるモードの場合。
+- `notify_tab = self._make_scrollable_tab(notebook, "通知")`：「通知」タブを作る。
+- `self._build_notification_section(notify_tab)`：通知セクションを作る。
+- `search_tab = self._make_scrollable_tab(notebook, "検索の挙動")`：「検索の挙動」タブを作る。
+- `self._build_display_section(display_tab)`：表示セクションを作る。
+- `self._build_search_behavior_section(search_tab)`：検索の挙動セクションを作る。
+- `self.bind("<Destroy>", self._on_settings_destroy)`：破棄時の後始末を結び付ける。
+- `ttk.Button(self, text="閉じる", command=self.destroy).pack(side="bottom", pady=12)`：閉じるボタンを配置する。
+- `def _make_scrollable_tab(self, notebook, label):`：スクロール可能なタブを1枚作る関数。
+- `"""カテゴリタブ1枚分の、マウスホイール対応スクロール領域を作成してnotebookへ追加する。通知タブのように項目数が多くダイアログの高さに収まらない場合でも、従来通りスクロールで閲覧できるようにするためのヘルパー(v0.8.9・設定画面の整理で新設)。"""`：スクロール対応の目的を示すdocstring。
+- `tab_outer = ttk.Frame(notebook)`：タブの外枠を作る。
+- `notebook.add(tab_outer, text=label)`：Notebookへ追加する。
+- `canvas = tk.Canvas(tab_outer, highlightthickness=0)`：スクロール用のCanvasを作る。
+- `vsb = ttk.Scrollbar(tab_outer, orient="vertical", command=canvas.yview)`：縦スクロールバーを作る。
+- `canvas.configure(yscrollcommand=vsb.set)`：Canvasとスクロールバーを結び付ける。
+- `canvas.pack(side="left", fill="both", expand=True)`：Canvasを配置する。
+- `vsb.pack(side="right", fill="y")`：スクロールバーを配置する。
+- `frame = ttk.Frame(canvas, padding=16)`：中身のフレームを作る。
+- `frame_id = canvas.create_window((0, 0), window=frame, anchor="nw")`：Canvasの中にフレームを置く。
+- `def _on_frame_configure(event=None):`：フレームのサイズが変わったときの処理。
+- `canvas.configure(scrollregion=canvas.bbox("all"))`：スクロール範囲を更新する。
+- `def _on_canvas_configure(event):`：Canvasのサイズが変わったときの処理。
+- `canvas.itemconfig(frame_id, width=event.width)`：フレームの幅をCanvasに合わせる。
+- `frame.bind("<Configure>", _on_frame_configure)`：フレームのサイズ変更を結び付ける。
+- `canvas.bind("<Configure>", _on_canvas_configure)`：Canvasのサイズ変更を結び付ける。
+- `def _on_mousewheel(event):`：マウスホイール処理。
+- `if event.num == 4:`：Linuxの上スクロールの場合。
+- `canvas.yview_scroll(-1, "units")`：1単位上にスクロールする。
+- `elif event.num == 5:`：Linuxの下スクロールの場合。
+- `canvas.yview_scroll(1, "units")`：1単位下にスクロールする。
+- `else:`：WindowsやmacOSの場合。
+- `canvas.yview_scroll(-1 if event.delta > 0 else 1, "units")`：`delta` の向きでスクロールする。
+- `def _bind_mousewheel(_event=None):`：マウスホイールを有効化する関数。
+- `canvas.bind_all("<MouseWheel>", _on_mousewheel)`：Windows用のホイールを結び付ける。
+- `canvas.bind_all("<Button-4>", _on_mousewheel)`：Linuxの上スクロールを結び付ける。
+- `canvas.bind_all("<Button-5>", _on_mousewheel)`：Linuxの下スクロールを結び付ける。
+- `def _unbind_mousewheel(_event=None):`：マウスホイールを無効化する関数。
+- `canvas.unbind_all("<MouseWheel>")`：Windows用の結び付けを外す。
+- `canvas.unbind_all("<Button-4>")`：Linuxの上スクロールを外す。
+- `canvas.unbind_all("<Button-5>")`：Linuxの下スクロールを外す。
+- `canvas.bind("<Enter>", _bind_mousewheel)`：Canvasに入ったらホイールを有効化する。
+- `canvas.bind("<Leave>", _unbind_mousewheel)`：Canvasを出たらホイールを無効化する。
+- `self._mousewheel_unbinders.append(_unbind_mousewheel)`：破棄時に解除できるよう控える。
+- `return frame`：中身のフレームを返す。
+- `def _on_settings_destroy(self, event=None):`：設定ダイアログ破棄時の処理。
+- `if event is not None and event.widget is not self:`：自分自身の破棄でない場合。
+- `return`：子ウィジェットの破棄では何もしない。
+- `for unbind in self._mousewheel_unbinders:`：控えた解除関数を1つずつ呼ぶ。
+- `try:`：解除の例外に備える。
+- `unbind()`：ホイールの結び付けを外す。
+- `except Exception:`：解除に失敗しても無視する。
+- `pass`：破棄時の後始末で止まらないようにする。
+
+### **第11章：設定ダイアログ 表示と検索の挙動**
+
+- `def _build_display_section(self, frame):`：「表示・テーマ」セクションを作る関数。
+- `ttk.Label(frame, text="簡易プレビュー", font=('', 10, 'bold')).pack(anchor="w")`：簡易プレビューの見出し。
+- `ttk.Label(frame, text="検索結果を選択した際に、内容を簡易表示します\n(テキストは中身の一部、画像はサムネイル)", foreground="#666666", justify="left").pack(anchor="w", pady=(2, 8))`：簡易プレビューの説明文。
+- `radio_row = ttk.Frame(frame)`：ON/OFFを横並びにする行。
+- `radio_row.pack(anchor="w")`：行を配置する。
+- `ttk.Radiobutton(radio_row, text="ON", value="on", variable=self.app.preview_enabled_var, command=self.app.on_settings_changed).pack(side="left")`：ONのラジオボタン。
+- `ttk.Radiobutton(radio_row, text="OFF", value="off", variable=self.app.preview_enabled_var, command=self.app.on_settings_changed).pack(side="left", padx=(14, 0))`：OFFのラジオボタン。
+- `ttk.Separator(frame).pack(fill="x", pady=14)`：区切り線。
+- `ttk.Label(frame, text="テーマ", font=('', 10, 'bold')).pack(anchor="w")`：テーマの見出し。
+- `ttk.Label(frame, text="アプリ全体の配色を切り替えます", foreground="#666666", justify="left").pack(anchor="w", pady=(2, 8))`：テーマの説明文。
+- `theme_row = ttk.Frame(frame)`：テーマ選択を横並びにする行。
+- `theme_row.pack(anchor="w")`：行を配置する。
+- `ttk.Radiobutton(theme_row, text="ライト", value="light", variable=self.app.theme_var, command=self.app.on_settings_changed).pack(side="left")`：ライトのラジオボタン。
+- `ttk.Radiobutton(theme_row, text="ダーク", value="dark", variable=self.app.theme_var, command=self.app.on_settings_changed).pack(side="left", padx=(14, 0))`：ダークのラジオボタン。
+- `ttk.Separator(frame).pack(fill="x", pady=14)`：区切り線。
+- `# 修正(v0.9.6・システムトレイ機能): ウィンドウを閉じる/最小化した際にタスクバーから消してシステムトレイへ格納するかどうかの設定。`：システムトレイ設定のコメント。
+- `ttk.Label(frame, text="システムトレイ", font=('', 10, 'bold')).pack(anchor="w")`：システムトレイの見出し。
+- `ttk.Label(frame, text="閉じる/最小化したときに、タスクバーではなく\nシステムトレイへ格納します", foreground="#666666", justify="left").pack(anchor="w", pady=(2, 8))`：システムトレイの説明文。
+- `tray_state = "normal" if tray_feature_available() else "disabled"`：トレイ機能が使えるかで有効無効を決める。
+- `tray_cb = ttk.Checkbutton(frame, text="システムトレイに格納する", state=tray_state, variable=self.app.minimize_to_tray_enabled_var, command=self.app.on_settings_changed)`：トレイ格納のチェックボックス。
+- `tray_cb.pack(anchor="w")`：チェックボックスを配置する。
+- `add_tooltip(tray_cb, "ONにすると、閉じるボタンや最小化ボタンを押したときに\nウィンドウがタスクバーから消え、トレイアイコンに格納されます。\nトレイアイコンをダブルクリックすると元に戻ります。\nこの状態でもCtrlキーのすばやい2回押しでクイック検索を呼び出せます。")`：トレイ機能のツールチップ。
+- `if not tray_feature_available():`：トレイ機能が使えない場合。
+- `ttk.Label(frame, text="※ pystray/Pillow が導入されていないため無効です（pip install pystray Pillow）", foreground="#999999", justify="left").pack(anchor="w", padx=(18, 0), pady=(0, 8))`：依存ライブラリ不足の案内。
+- `def _build_search_behavior_section(self, frame):`：「検索の挙動」セクションを作る関数。
+- `ttk.Label(frame, text="検索の挙動", font=('', 10, 'bold')).pack(anchor="w")`：見出し。
+- `ttk.Label(frame, text="検索の自動実行や候補表示に関する設定です", foreground="#666666", justify="left").pack(anchor="w", pady=(2, 8))`：説明文。
+- `live_reindex_cb = ttk.Checkbutton(frame, text="①入力するたびに自動で再検索する(リアルタイム検索・インデックス検索時のみ)", variable=self.app.live_reindex_enabled_var, command=self.app.on_settings_changed)`：リアルタイム検索のチェックボックス。
+- `live_reindex_cb.pack(anchor="w")`：配置する。
+- `add_tooltip(live_reindex_cb, "インデックス検索が有効なとき、キーワードなどを入力するたびに\n自動で再検索します。")`：ツールチップ。
+- `ttk.Label(frame, text="※結果が入力のたびに変化し、通知も出るため、既定ではOFFです", foreground="#999999", justify="left").pack(anchor="w", padx=(18, 0), pady=(0, 8))`：既定OFFの理由。
+- `suggest_cb = ttk.Checkbutton(frame, text="②キーワード欄の候補一覧を充実させる(ファイル名・フォルダ名・検索履歴)", variable=self.app.keyword_suggest_enabled_var, command=self.app.on_settings_changed)`：候補充実のチェックボックス。
+- `suggest_cb.pack(anchor="w")`：配置する。
+- `add_tooltip(suggest_cb, "OFFにすると、候補一覧は従来どおり検索履歴のみになります。")`：OFF時の挙動。
+- `ttk.Label(frame, text="※キーワード欄の▾ボタンを押したときに表示される候補の内容です", foreground="#999999", justify="left").pack(anchor="w", padx=(18, 0), pady=(0, 8))`：候補の表示場所の案内。
+- `quick_state = "normal" if keyboard_hook_available() else "disabled"`：クイック検索が使えるかで有効無効を決める。
+- `quick_cb = ttk.Checkbutton(frame, text="③Ctrlキーをすばやく2回押してクイック検索の小窓を呼び出す", variable=self.app.quick_command_enabled_var, state=quick_state, command=self.app.on_settings_changed)`：クイック検索のチェックボックス。
+- `quick_cb.pack(anchor="w")`：配置する。
+- `add_tooltip(quick_cb, "アプリを最小化・裏に隠している状態でも、Ctrlキーを\nすばやく2回押すと簡易検索の小窓を呼び出せます(Escで閉じられます)。")`：ツールチップ。
+- `if keyboard_hook_available():`：キーボードフックが使える場合。
+- `ttk.Label(frame, text="※小窓では検索結果を最大30件まで表示します", foreground="#999999", justify="left").pack(anchor="w", padx=(18, 0), pady=(0, 8))`：小窓の上限案内。
+- `else:`：使えない場合。
+- `ttk.Label(frame, text="※ keyboard が導入されていないため無効です（pip install keyboard）", foreground="#999999", justify="left").pack(anchor="w", padx=(18, 0), pady=(0, 8))`：依存不足の案内。
+- `ttk.Separator(frame).pack(fill="x", pady=(10, 8))`：区切り線。
+- `# 修正(v0.9.6・内容検索対象拡張子の設定化): 従来はCONTENT_SEARCH_EXTENSIONS(=TEXT_PREVIEW_EXTENSIONS)固定だったファイル内容検索の対象拡張子を、ここから編集できるようにする。`：内容検索の拡張子を設定できるようにした理由。
+- `ttk.Label(frame, text="④ファイル内容検索の対象拡張子", font=('', 10, 'bold')).pack(anchor="w")`：見出し。
+- `ttk.Label(frame, text="「ファイル内容も検索」を使う際に、中身を読みに行く拡張子です", foreground="#666666", justify="left").pack(anchor="w", pady=(2, 6))`：説明文。
+- `ext_row = ttk.Frame(frame)`：入力欄とボタンを横並びにする行。
+- `ext_row.pack(anchor="w", fill="x")`：行を配置する。
+- `ext_entry = ttk.Entry(ext_row, textvariable=self.app.content_search_extensions_var, width=48)`：拡張子入力欄。
+- `ext_entry.pack(side="left", fill="x", expand=True)`：入力欄を配置する。
+- `add_tooltip(ext_entry, "カンマ区切りで拡張子を入力します(例: txt,py,md,log)。\n空欄にすると既定の拡張子一覧に戻ります。")`：入力方法の案内。
+- `def _save_content_ext():`：拡張子を保存する内部関数。
+- `self.app.settings['content_search_extensions'] = sorted(normalize_ext_filter(self.app.content_search_extensions_var.get()))`：入力を正規化してソートして保存する。
+- `self.app.mark_settings_dirty()`：設定が変わった印を付ける。
+- `ttk.Button(ext_row, text="適用", command=_save_content_ext).pack(side="left", padx=(6, 0))`：適用ボタン。
+- `reset_btn = ttk.Button(ext_row, text="既定に戻す", command=lambda: (self.app.content_search_extensions_var.set(",".join(sorted(TEXT_PREVIEW_EXTENSIONS))), _save_content_ext()))`：既定に戻すボタン。既定一覧をセットして保存する。
+- `reset_btn.pack(side="left", padx=(4, 0))`：配置する。
+- `ttk.Label(frame, text="※空欄で保存すると既定の拡張子一覧(txt/py/json/csv等)が使われます", foreground="#999999", justify="left").pack(anchor="w", padx=(0, 0), pady=(4, 0))`：空欄時の挙動。
+- `ttk.Separator(frame).pack(fill="x", pady=(10, 8))`：区切り線。
+- `# 修正(v0.9.6・パフォーマンス設定): CPU/メモリ使用を抑える設定、並列スレッド数、結果保持上限、USBドライブ確認をまとめる。`：パフォーマンス設定をまとめた理由。
+- `ttk.Label(frame, text="⑤パフォーマンス", font=('', 10, 'bold')).pack(anchor="w")`：見出し。
+- `ttk.Label(frame, text="検索速度と、CPU/メモリ負荷のバランスを調整します", foreground="#666666", justify="left").pack(anchor="w", pady=(2, 6))`：説明文。
+- `low_load_cb = ttk.Checkbutton(frame, text="低負荷モード(検索速度より、CPU/メモリ使用の抑制を優先する)", variable=self.app.low_load_mode_var, command=self.app.on_settings_changed)`：低負荷モードのチェックボックス。
+- `low_load_cb.pack(anchor="w")`：配置する。
+- `add_tooltip(low_load_cb, "ONにすると、並列検索のスレッド数を控えめにし、走査中に\n短い待ち時間を挟んでCPU使用率の急上昇を抑えます。\n検索速度は多少低下します。")`：低負荷モードの説明。
+- `ttk.Label(frame, text="※既定はOFF(検索速度優先)。他の作業をしながら検索したい場合はON推奨", foreground="#999999", justify="left").pack(anchor="w", padx=(18, 0), pady=(0, 8))`：既定と推奨の案内。
+- `worker_row = ttk.Frame(frame)`：スレッド数入力の行。
+- `worker_row.pack(anchor="w", fill="x", pady=(0, 8))`：行を配置する。
+- `ttk.Label(worker_row, text="並列処理スレッド数(0=自動):").pack(side="left")`：ラベル。
+- `worker_spin = ttk.Spinbox(worker_row, from_=0, to=64, width=5, textvariable=self.app.parallel_worker_count_var, command=self.app.on_settings_changed)`：スレッド数入力欄。0から64まで。
+- `worker_spin.pack(side="left", padx=(6, 0))`：配置する。
+- `worker_spin.bind("<Return>", lambda e: self.app.on_settings_changed())`：Enterで設定反映する。
+- `worker_spin.bind("<FocusOut>", lambda e: self.app.on_settings_changed())`：フォーカスが外れたら設定反映する。
+- `add_tooltip(worker_spin, "通常検索の並列処理に使うスレッド数の上限です。\n0(自動)ではCPUコア数から自動的に決定します。\n数値を大きくすると検索が速くなる場合がありますが、\nCPU/ディスクの負荷も増えます。")`：ツールチップ。
+- `max_row = ttk.Frame(frame)`：保持上限入力の行。
+- `max_row.pack(anchor="w", fill="x", pady=(0, 8))`：行を配置する。
+- `ttk.Label(max_row, text="検索結果の保持上限(0=既定の30万件):").pack(side="left")`：ラベル。
+- `max_spin = ttk.Spinbox(max_row, from_=0, to=5000000, increment=1000, width=9, textvariable=self.app.max_stored_results_override_var, command=self.app.on_settings_changed)`：保持上限入力欄。
+- `max_spin.pack(side="left", padx=(6, 0))`：配置する。
+- `max_spin.bind("<Return>", lambda e: self.app.on_settings_changed())`：Enterで反映する。
+- `max_spin.bind("<FocusOut>", lambda e: self.app.on_settings_changed())`：フォーカスが外れたら反映する。
+- `add_tooltip(max_spin, "検索結果として一覧に保持する最大件数です。\n件数を小さくすると、非常に大量の結果が見つかる検索での\nメモリ使用量を抑えられます(超過分は件数のみ集計されます)。\n変更は次の検索開始時から反映されます。")`：ツールチップ。
+- `warn_drive_cb = ttk.Checkbutton(frame, text="USB/外付けドライブが検索対象に含まれる場合、開始前に確認する", variable=self.app.warn_removable_drive_var, command=self.app.on_settings_changed)`：USB確認のチェックボックス。
+- `warn_drive_cb.pack(anchor="w")`：配置する。
+- `add_tooltip(warn_drive_cb, "検索途中でドライブが取り外されると検索が中断される\n可能性があるため、既定でONにしています(Windowsのみ判定)。")`：既定ONの理由。
+
+## おわりに
+
+今回は3957行目から5117行目まで、コピー・移動、検索結果の保存・比較、ツリー走査、インデックス作成・検索・重複検索のワーカー、クイックコマンド、設定ダイアログを一気に解説しました。
+
+特に `_scan_tree` と `_check_folder_accessibility` は、再帰からスタックへ変えたことで深いフォルダでも落ちにくくなっているのがポイントです。インデックス作成も、エラー配下は削除しない、途中で失敗したら明示的にロールバックするという安全側の作りになっています。
+
+次回は5118行目〜の続きを解説します。
